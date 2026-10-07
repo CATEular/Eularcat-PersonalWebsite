@@ -1,0 +1,11 @@
+{
+  "workflows": [
+    {"id":"schematic","icon":"schematic","title":{"zh":"原理图绘制","en":"Schematic drawing"},"description":{"zh":"器件、连接与标注的过程记录","en":"Records of devices, connections and annotations"},"notes":[]},
+    {"id":"layout","icon":"layout","title":{"zh":"版图绘制","en":"Layout design"},"description":{"zh":"布局、布线与迭代中的实际尝试","en":"Practical attempts at placement, routing and iteration"},"notes":[]},
+    {"id":"simulation","icon":"simulation","title":{"zh":"仿真与分析","en":"Simulation & analysis"},"description":{"zh":"从测试设置到结果分析与回看","en":"From test setup to analysis and revisiting results"},"notes":[]},
+    {"id":"verification","icon":"verification","title":{"zh":"DRC / LVS","en":"DRC / LVS"},"description":{"zh":"规则检查、连通性核对与修改记录","en":"Design checks, connectivity verification and fixes"},"notes":[]}
+  ],
+  "skills": [
+    {"id":"analog-ic-notes","name":"Analog IC Notes","version":"1.0","description":{"zh":"把论文读成可回看的模拟 IC 笔记","en":"Turn papers into analog IC notes worth revisiting"},"tags":{"zh":["论文精读","电路分析","Markdown"],"en":["Paper reading","Circuit analysis","Markdown"]}}
+  ]
+}

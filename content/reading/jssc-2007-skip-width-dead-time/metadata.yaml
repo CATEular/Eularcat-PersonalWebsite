@@ -1,0 +1,40 @@
+{
+  "document_id": "JSSC2007_Huang_Chen_TriModeBuck",
+  "title": "Dithering Skip Modulation, Width and Dead Time Controllers in Highly Efficient DC-DC Converters for System-On-Chip Applications",
+  "authors": [
+    "Hong-Wei Huang",
+    "Ke-Horng Chen",
+    "Sy-Yen Kuo"
+  ],
+  "doi": "10.1109/JSSC.2007.907175",
+  "process_node": "TSMC 0.35µm 2P4M CMOS",
+  "vin_range": "3.3V (标称 2.7V ~ 3.6V)",
+  "vout_range": "1.65V",
+  "iout_max": "500mA (全范围 0.1mA ~ 500mA)",
+  "fsw": "1.0MHz (PWM 模式标称)",
+  "topology": "Synchronous Step-Down Buck Converter (12-Unit Segmented Power Stage)",
+  "control_mode": "Tri-Mode (PWM / DSM / PFM) + Current-Mode Delay-Line ADC + OWC + ODC",
+  "peak_efficiency": "95.0% (重载) / >90% (0.3mA~500mA 全范围) / 90% (0.1mA 极轻载)",
+  "fom_transient": "N/A (宽动态范围自适应高效率拓扑)",
+  "tags": [
+    "论文笔记",
+    "PMIC",
+    "DCDC_Buck",
+    "模拟IC",
+    "三模控制",
+    "DSM抖动跳步",
+    "动态宽度控制",
+    "自适应死区",
+    "地弹抑制",
+    "延迟链ADC"
+  ],
+  "status": "published",
+  "updated": "2026-09-04",
+  "lang": "zh",
+  "venue": "IEEE Journal of Solid-State Circuits (JSSC)",
+  "year": 2007,
+  "date": "2026-09-04",
+  "description": "Buck 跳周期调制、脉宽与死区控制的论文阅读记录",
+  "url": "https://doi.org/10.1109/JSSC.2007.907175",
+  "type": "reading"
+}

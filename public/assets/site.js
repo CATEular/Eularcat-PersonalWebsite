@@ -1,0 +1,35 @@
+const lang=document.documentElement.dataset.locale;
+const words=lang==='zh'?{start:'输入关键词，搜索学习主题、笔记、阅读资料和项目。',none:'没有找到匹配内容。试试其他关键词。',planned:'计划',zhOnly:'这篇笔记保留了作者的原始语言。',copied:'已复制',copyFail:'复制失败，请手动选择引用文字。',types:{learn:'学习',reading:'阅读',notes:'笔记',projects:'项目','ai-ic':'AI × IC',about:'关于'},error:'搜索暂时不可用，请稍后重试。'}:{start:'Search learning topics, notes, papers and projects.',none:'No matching content. Try another keyword.',planned:'Planned',zhOnly:'This note is currently available in Chinese only.',copied:'Copied',copyFail:'Could not copy. Please select the citation text manually.',types:{learn:'LEARN',reading:'READING',notes:'NOTES',projects:'PROJECTS','ai-ic':'AI × IC',about:'ABOUT'},error:'Search is temporarily unavailable. Please try again.'};
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const save=(k,v)=>{try{localStorage.setItem(k,v);}catch{}};
+$('button[data-theme]')?.addEventListener('click',()=>{const value=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=value;save('eularcat-theme',value);});
+$$('[data-language]').forEach(a=>a.addEventListener('click',()=>save('eularcat-language',a.dataset.language)));
+const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+const menu=$('.menu-toggle');let menuMotion;
+menu?.addEventListener('click',()=>{
+ const open=menu.getAttribute('aria-expanded')!=='true',nav=$('#mobile-nav'),wasVisible=!nav.hidden,presentation=wasVisible?{opacity:getComputedStyle(nav).opacity,transform:getComputedStyle(nav).transform}:null;menu.setAttribute('aria-expanded',String(open));menuMotion?.cancel();
+ if(reduced()){nav.hidden=!open;return;}
+ nav.hidden=false;
+ menuMotion=nav.animate([presentation||(open?{opacity:0,transform:'translateY(-5px) scale(.97)'}:{opacity:1,transform:'none'}),open?{opacity:1,transform:'none'}:{opacity:0,transform:'translateY(-5px) scale(.97)'}],{duration:open?220:150,easing:'cubic-bezier(.32,.72,0,1)'});
+ if(!open)menuMotion.finished.then(()=>{if(menu.getAttribute('aria-expanded')==='false')nav.hidden=true;}).catch(()=>{});
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu?.getAttribute('aria-expanded')==='true'){menu.setAttribute('aria-expanded','false');$('#mobile-nav').hidden=true;menu.focus();}});
+const dialog=$('.search-dialog'),input=$('#search-input'),results=$('#search-results');let searchData,loading,selected=-1,trigger;
+async function getIndex(){if(searchData)return searchData;if(!loading)loading=fetch('/search-index.json').then(r=>{if(!r.ok)throw new Error('Search index unavailable');return r.json();}).then(x=>searchData=x).catch(e=>{loading=null;throw e;});return loading;}
+function normalize(s){return String(s).normalize('NFKC').toLowerCase().replace(/\s+/g,' ').trim();}
+function score(row,terms){const title=normalize(row.title),text=normalize(row.text+' '+row.description+' '+(row.tags||[]).join(' '));if(!terms.every(term=>title.includes(term)||text.includes(term)))return -1;return terms.reduce((total,term)=>total+(title===term?100:title.includes(term)?20:1),0)+(row.lang===lang?3:0);}
+async function renderResults(query,target){selected=-1;const terms=normalize(query).split(' ').filter(Boolean);if(!terms.length){target.innerHTML=`<p class="search-empty">${words.start}</p>`;return;}try{const data=await getIndex();if(normalize(target===results?input.value:$('#page-search').value)!==normalize(query))return;const matches=data.map(x=>({x,s:score(x,terms)})).filter(x=>x.s>=0).sort((a,b)=>b.s-a.s);const seen=new Set();const rows=matches.filter(({x})=>{const key=x.url.replace(/^\/(zh|en)/,'');if(seen.has(key))return false;seen.add(key);return true;}).slice(0,30);target.innerHTML=rows.length?rows.map(({x})=>`<a class="search-result" href="${esc(x.url)}"><span>${words.types[x.type]||esc(x.type)} · ${esc(x.lang.toUpperCase())}${x.status==='planned'?' · '+words.planned:''}</span><strong>${esc(x.title)}</strong><p>${esc(x.description)}</p>${lang==='en'&&x.lang==='zh'?`<p>${words.zhOnly}</p>`:''}</a>`).join(''):`<p class="search-empty">${words.none}</p>`;}catch{target.innerHTML=`<p class="search-empty">${words.error}</p>`;}}
+function openSearch(el,animate=false){trigger=el||document.activeElement;if(!dialog.open){dialog.showModal();if(animate&&!reduced())dialog.animate([{opacity:0,transform:'translateY(-5px) scale(.97)'},{opacity:1,transform:'none'}],{duration:220,easing:'cubic-bezier(.23,1,.32,1)'});}input.focus();getIndex().catch(()=>{});}
+$$('[data-search]').forEach(button=>button.addEventListener('click',e=>openSearch(button,e.detail>0)));
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openSearch(document.activeElement);}});
+$('[data-close-search]')?.addEventListener('click',()=>dialog.close());dialog?.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});dialog?.addEventListener('close',()=>trigger?.focus());
+input?.addEventListener('input',()=>renderResults(input.value,results));
+dialog?.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();dialog.close();return;}const rows=[...results.querySelectorAll('a')];if(['ArrowDown','ArrowUp'].includes(e.key)&&rows.length){e.preventDefault();selected=(selected+(e.key==='ArrowDown'?1:-1)+rows.length)%rows.length;rows.forEach((r,i)=>r.classList.toggle('selected',i===selected));rows[selected].scrollIntoView({block:'nearest'});}if(e.key==='Enter'&&selected>=0){e.preventDefault();rows[selected]?.click();}});
+$('#page-search')?.addEventListener('input',e=>renderResults(e.target.value,$('#page-results')));
+if($('#page-search')){const q=new URLSearchParams(location.search).get('q');if(q){$('#page-search').value=q;renderResults(q,$('#page-results'));}}
+$$('[data-filter]').forEach(button=>button.addEventListener('click',()=>{const value=button.dataset.filter;$$('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));let count=0;$$('[data-record]').forEach(row=>{row.hidden=!(value==='all'||row.dataset.category===value||JSON.parse(row.dataset.tags).includes(value));if(!row.hidden)count++;});if($('[data-count]'))$('[data-count]').textContent=count+' '+(lang==='zh'?'篇论文':'papers');$('[data-filter-empty]').hidden=count>0||$$('[data-record]').length===0;}));
+$('[data-citation]')?.addEventListener('click',async e=>{try{await navigator.clipboard.writeText(e.target.dataset.citation);$('[data-copy-status]').textContent=words.copied;}catch{$('[data-copy-status]').textContent=words.copyFail;}});
+const original=$('[data-original-note]');try{if(original&&original.dataset.originalNote==='zh'&&localStorage.getItem('eularcat-language')==='en'){original.hidden=false;original.textContent='This note is currently available in Chinese only.';}}catch{}
+if(navigator.platform?.toLowerCase().includes('win'))$$('.search-toggle kbd').forEach(x=>x.textContent='Ctrl K');
+

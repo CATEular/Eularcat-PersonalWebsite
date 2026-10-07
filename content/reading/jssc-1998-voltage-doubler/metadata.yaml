@@ -1,0 +1,38 @@
+{
+  "document_id": "JSSC1998_Favrat_VoltageDoubler",
+  "title": "A High-Efficiency CMOS Voltage Doubler",
+  "authors": [
+    "Pierre Favrat",
+    "Philippe Deval",
+    "Michel J. Declercq"
+  ],
+  "doi": "10.1109/4.661206",
+  "process_node": "2.0µm CMOS / 0.7µm Digital CMOS",
+  "vin_range": "1.1V ~ 3.0V",
+  "vout_range": "2.1V ~ 5.5V",
+  "iout_max": "2mA (全集成) / >1mA (片外电容)",
+  "fsw": "50kHz ~ 10MHz",
+  "topology": "Switched-Capacitor Voltage Doubler (Favrat Cross-Coupled Cell)",
+  "control_mode": "Two-Phase Non-Overlapping Clocks + Dynamic Bulk Switching",
+  "peak_efficiency": "95.6% (片外电容) / 75% (全集成电容)",
+  "fom_transient": "N/A (稳态阻抗与效率模型)",
+  "tags": [
+    "论文笔记",
+    "PMIC",
+    "模拟IC",
+    "电荷泵",
+    "开关电容",
+    "衬底换向",
+    "交叉耦合",
+    "栅极驱动"
+  ],
+  "status": "published",
+  "updated": "2026-09-04",
+  "lang": "zh",
+  "venue": "IEEE Journal of Solid-State Circuits (JSSC)",
+  "year": 1998,
+  "date": "2026-09-04",
+  "description": "高效率 CMOS 倍压电荷泵的论文阅读记录",
+  "url": "https://doi.org/10.1109/4.661206",
+  "type": "reading"
+}

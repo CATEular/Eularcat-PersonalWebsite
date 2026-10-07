@@ -1,0 +1,8 @@
+{
+  "paths": {
+    "papers": "./papers",
+    "notes": "./notes",
+    "images": "./notes/assets"
+  },
+  "language": "zh"
+}

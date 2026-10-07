@@ -1,0 +1,41 @@
+{
+  "document_id": "JSSC2014_Cheng_Ki_DDABuck",
+  "title": "A 10/30 MHz Fast Reference-Tracking Buck Converter With DDA-Based Type-III Compensator",
+  "authors": [
+    "Lin Cheng",
+    "Yonggen Liu",
+    "Wing-Hung Ki"
+  ],
+  "doi": "10.1109/JSSC.2014.2346770",
+  "process_node": "Standard 0.13 µm CMOS (3.3V Devices)",
+  "vin_range": "3.3V (标称锂电池输入范围 2.7V ~ 4.2V)",
+  "vout_range": "0.37V ~ 2.85V (@ 10MHz) / 0.45V ~ 2.4V (@ 30MHz)",
+  "iout_max": "1.5A (最大连续输出功率 3.6W @ Vo=2.4V)",
+  "fsw": "10 MHz / 30 MHz (斜坡发生器闭环最高可达 70 MHz)",
+  "topology": "Synchronous Step-Down Buck Converter",
+  "control_mode": "Voltage-Mode Control + DDA-Based Type-III Compensator + End-Point Prediction (EPP)",
+  "peak_efficiency": "91.8% (@ 10MHz, 2.4V) / 86.6% (@ 30MHz, 2.4V)",
+  "fom_transient": "Up-Tracking: 0.67 µs/V (@ 30MHz), 1.67 µs/V (@ 10MHz); Down-Tracking: 1.56 µs/V (@ 30MHz), 4.44 µs/V (@ 10MHz)",
+  "tags": [
+    "论文笔记",
+    "PMIC",
+    "DCDC_Buck",
+    "模拟IC",
+    "电压模控制",
+    "Type-III补偿",
+    "差动差分放大器_DDA",
+    "延迟补偿斜坡发生器",
+    "快速参考电压跟踪_EPP",
+    "高频Buck",
+    "终点预测"
+  ],
+  "status": "published",
+  "updated": "2026-09-04",
+  "lang": "zh",
+  "venue": "IEEE Journal of Solid-State Circuits (JSSC)",
+  "year": 2014,
+  "date": "2026-09-04",
+  "description": "参考跟踪 Buck 与 DDA 型 Type-III 补偿器的论文阅读记录",
+  "url": "https://doi.org/10.1109/JSSC.2014.2346770",
+  "type": "reading"
+}

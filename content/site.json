@@ -1,0 +1,89 @@
+{
+  "name": "Eularcat",
+  "studioUrl": "https://ic-schematic-studio.pages.dev/#editor",
+  "learning": [
+    {
+      "category": "power",
+      "code": "POWER",
+      "glyph": "P",
+      "eyebrow": "POWER & CIRCUITS",
+      "title": {
+        "zh": "功率及电路基础",
+        "en": "Power & circuit fundamentals"
+      },
+      "description": {
+        "zh": "从功率、电源与器件的基础问题开始，建立后续设计的理解",
+        "en": "A foundation in power, supplies and devices for the design work ahead"
+      },
+      "topics": [
+        "Power Fundamentals",
+        "Power Devices",
+        "Power Losses",
+        "Power Sequencing"
+      ]
+    },
+    {
+      "category": "buck",
+      "code": "BUCK",
+      "glyph": "B",
+      "eyebrow": "SYNCHRONOUS BUCK",
+      "title": {
+        "zh": "同步 DC-DC Buck",
+        "en": "Synchronous DC-DC Buck"
+      },
+      "description": {
+        "zh": "学习同步 Buck 的工作方式、控制、环路与轻载运行",
+        "en": "Learning synchronous Buck operation, control, loop behavior and light-load modes"
+      },
+      "topics": [
+        "Synchronous DC-DC Buck",
+        "PWM",
+        "COT",
+        "AOT",
+        "Loop Compensation",
+        "Zero Current Detection",
+        "Light Load Operation"
+      ]
+    },
+    {
+      "category": "multiphase",
+      "code": "MULTI",
+      "glyph": "M",
+      "eyebrow": "MULTI-PHASE BUCK",
+      "title": {
+        "zh": "多相 DC-DC Buck",
+        "en": "Multi-phase DC-DC Buck"
+      },
+      "description": {
+        "zh": "进一步整理多相交错、均流与大电流供电相关的学习记录",
+        "en": "Further study of interleaving, current sharing and high-current power delivery"
+      },
+      "topics": [
+        "Multi-phase DC-DC Buck",
+        "Phase Interleaving",
+        "Current Sharing",
+        "Transient Response",
+        "Phase Shedding"
+      ]
+    },
+    {
+      "category": "ai-eda",
+      "code": "EDA",
+      "glyph": "A",
+      "eyebrow": "AI × EDA",
+      "title": {
+        "zh": "AI × EDA",
+        "en": "AI × EDA"
+      },
+      "description": {
+        "zh": "整理 AI 与 EDA 工具结合时的文章和工程笔记",
+        "en": "Articles and engineering notes on AI working with EDA tools"
+      },
+      "topics": [
+        "AI-assisted EDA",
+        "EDA Automation",
+        "Engineering Notes"
+      ]
+    }
+  ]
+}

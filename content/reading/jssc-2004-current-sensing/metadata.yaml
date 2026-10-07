@@ -1,0 +1,40 @@
+{
+  "document_id": "JSSC2004_Lee_Mok_CurrentSensing",
+  "title": "A Monolithic Current-Mode CMOS DC–DC Converter With On-Chip Current-Sensing Technique",
+  "authors": [
+    "Cheung Fai Lee",
+    "Philip K. T. Mok"
+  ],
+  "doi": "10.1109/JSSC.2003.820870",
+  "process_node": "Standard 0.6 µm CMOS (AMS)",
+  "vin_range": "3.0V ~ 5.2V (锂离子电池 3.6V 标称)",
+  "vout_range": "1.0V ~ 3.3V (< Vin - 0.2V)",
+  "iout_max": "500 mA (连续承载 50mA ~ 450mA)",
+  "fsw": "300 kHz ~ 1 MHz (实验设定 500 kHz)",
+  "topology": "Monolithic Synchronous Step-Down Buck Converter",
+  "control_mode": "Peak Current-Mode PWM Control + Active Slope Compensation",
+  "peak_efficiency": "89.5% (@ Vin=3.6V, Vo=2.0V, Io=300mA)",
+  "fom_transient": "Sensing Absolute Error < 4% (全片内集成无损采样，无额外引脚与阻抗功耗)",
+  "tags": [
+    "论文笔记",
+    "PMIC",
+    "DCDC_Buck",
+    "模拟IC",
+    "峰值电流模控制",
+    "片上电流采样",
+    "虚短电压镜像",
+    "斜坡补偿",
+    "浮动Class-AB",
+    "工艺容差对消",
+    "防直通死区控制"
+  ],
+  "status": "published",
+  "updated": "2026-09-11",
+  "lang": "zh",
+  "venue": "IEEE Journal of Solid-State Circuits (JSSC)",
+  "year": 2004,
+  "date": "2026-09-11",
+  "description": "片上电流采样与单片电流模 Buck 的论文阅读记录",
+  "url": "https://doi.org/10.1109/JSSC.2003.820870",
+  "type": "reading"
+}

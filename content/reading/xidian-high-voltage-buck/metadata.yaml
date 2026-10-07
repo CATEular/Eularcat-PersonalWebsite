@@ -1,0 +1,45 @@
+{
+  "document_id": "XIDIAN2024_Xu_HighVoltageBuck",
+  "title": "一种高压高效率低纹波Buck转换器设计 (A High-Voltage And High-Efficiency Low-Ripple Buck Converter Design)",
+  "authors": [
+    "徐嘉希 (Xu Jiaxi)"
+  ],
+  "process_node": "0.18-µm BCD CMOS Process",
+  "vin_range": "7.0 V ~ 60.0 V (启动阈值 6.5 V, 欠压关断 5.0 V)",
+  "vout_range": "5.0 V (标称稳压输出)",
+  "iout_max": "4.0 A (标称额定) / 5.0 A (峰值通流)",
+  "fsw": "100 kHz ~ 1.2 MHz (单引脚可编程电阻设定 / 外接时钟锁相环同步)",
+  "topology": "Asynchronous/Synchronous High-Voltage Step-Down Buck Converter",
+  "control_mode": "Peak Current Mode Control (PCMC) with Dual-Mode PWM/PSM Modulation",
+  "peak_efficiency": "95.2% (@ VIN=7V, ILOAD=0.6A)",
+  "fom_transient": "19.74 pF (FOM = (IQ/ILOAD) * (VRIPPLE/VOUT) * COUT)",
+  "die_size": "2.46 mm × 1.69 mm (4.16 mm²)",
+  "tags": [
+    "论文笔记",
+    "PMIC",
+    "DCDC_Buck",
+    "模拟IC",
+    "高压Buck",
+    "峰值电流模_PCMC",
+    "双模式控制_PWM_PSM",
+    "误差放大器钳位",
+    "低压差操作_Dropout",
+    "自举电容刷新",
+    "可编程频率_PLL",
+    "频率折返_Foldback",
+    "带隙基准_深N阱漏电补偿",
+    "西安电子科技大学"
+  ],
+  "status": "published",
+  "updated": "2026-09-24",
+  "lang": "zh",
+  "venue": "西安电子科技大学硕士学位论文 (Xidian University Master's Thesis)",
+  "year": 2024,
+  "date": "2026-09-24",
+  "description": "高压、高效率、低纹波 Buck 转换器的学位论文阅读记录",
+  "type": "reading",
+  "advisors": [
+    "刘帘曦 教授",
+    "刘洪涛 高工"
+  ]
+}
