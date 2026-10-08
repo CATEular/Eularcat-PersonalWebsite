@@ -3,6 +3,16 @@ import assert from 'node:assert/strict';
 import {library,ai,about,learn} from '../src/components/pages.mjs';
 import {learningTiles} from '../src/components/home.mjs';
 import fs from 'node:fs';
+import {renderMarkdown} from '../src/markdown.mjs';
+test('published Virtuoso prose renders emphasis instead of literal Markdown markers',()=>{
+ const root='content/workflows/virtuoso';
+ for(const file of fs.readdirSync(root).filter(name=>name.endsWith('.md'))){
+  const html=renderMarkdown(fs.readFileSync(`${root}/${file}`,'utf8')).html.replace(/<pre[\s\S]*?<\/pre>/g,'');
+  assert.doesNotMatch(html,/\*\*/,file);
+ }
+ const osc=renderMarkdown(fs.readFileSync(`${root}/osc.zh.md`,'utf8')).html;
+ assert.match(osc,/<strong>技能接力：<\/strong> connect/);
+});
 test('reading filters reflect unique published record tags, including arbitrary user tags',()=>{
  const html=library('zh','reading',[{type:'reading',lang:'zh',slug:'one',title:'One',tags:['用户自定义','Buck']},{type:'reading',lang:'zh',slug:'two',title:'Two',tags:['用户自定义']}]);
  assert.equal((html.match(/data-filter="用户自定义"/g)||[]).length,1);

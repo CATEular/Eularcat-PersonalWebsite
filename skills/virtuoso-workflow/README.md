@@ -22,6 +22,12 @@ Public downloads do not require a GitHub login. Keep all five skill folders as s
 python -m pip install -r requirements-optional.txt
 ```
 
+## Validated environment / 已验证环境
+
+这套工作流围绕 VMware 上运行 Virtuoso 的 Linux 虚拟机开发与验证，支持 Agent 通过 bridge／SSH 操作虚拟机。CentOS／Red Hat 原生主机上直接运行 Virtuoso 的方式尚未尝试，暂不列为已验证环境。
+
+This workflow was developed and validated around Virtuoso running in a Linux virtual machine on VMware, with the agent connecting through the bridge and SSH. Running Virtuoso directly on a native CentOS or Red Hat host has not been tried and is not a validated setup.
+
 ## Dependencies and configuration
 
 The skills are instructions and helper scripts. Actual execution requires a local-capable agent, Python, external [virtuoso-bridge-lite](https://github.com/Arcadia-1/virtuoso-bridge-lite), SSH access, running licensed Virtuoso/Spectre/OCEAN, and a PDK you are authorized to use. A browser-only chat cannot reach a private VM simply by reading SKILL.md.

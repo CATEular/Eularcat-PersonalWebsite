@@ -5,6 +5,8 @@ description: Five skills, an engineering conversation, real OSC/RC/MOS cases, an
 
 ## Combine skills across turns
 
+This workflow was developed and validated around Virtuoso running in a Linux virtual machine on VMware, with the agent connecting through the bridge and SSH. Running Virtuoso directly on a native CentOS or Red Hat host has not been tried and is not a validated setup.
+
 Describe a goal, let the agent clarify conditions and execute, inspect the drawing and measurements, then request the next change. Connection state, design variables, run history and saved recommendations connect those turns. The skills are task roles rather than five mandatory sequential stages.
 
 | Need | Skill | Handoff |

@@ -1,5 +1,9 @@
 # ChatGPT / Codex 平台约定
 
+## 已验证的运行环境
+
+这套工作流围绕 VMware 上运行 Virtuoso 的 Linux 虚拟机开发与验证，支持 Agent 通过 bridge／SSH 操作虚拟机。CentOS／Red Hat 原生主机上直接运行 Virtuoso 的方式尚未尝试，暂不列为已验证环境。
+
 五个技能作为一个工作流套件安装在同一父目录。它们通过相对路径分享配置和接口参考，不需要原来的五个技能。技能是指导 Agent 的文件，不是可直接执行的 `/command`。
 
 个人环境统一放在 `virtuoso-connect/config.local.json`，环境操作前按 [配置协议](environment.md) 读取；公共 `SKILL.md`、脚本和参考不含个人绝对路径、主机或库名。配置中历史版本/结果仅用于定位，当前数据库和用户任务仍需核验。

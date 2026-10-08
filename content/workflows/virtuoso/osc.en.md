@@ -5,6 +5,8 @@ description: A five-stage CMOS ring oscillator with agent/GP tuning, independent
 
 ## What was completed
 
+This workflow was developed and validated around Virtuoso running in a Linux virtual machine on VMware, with the agent connecting through the bridge and SSH. Running Virtuoso directly on a native CentOS or Red Hat host has not been tried and is not a validated setup.
+
 A real five-stage CMOS ring oscillator was created and simulated, tuned using measured feedback, independently rerun and delivered with editable views. Final measurements: **100.480 MHz**, **1.801 Vpp**, **0.823 mW**. Validation date: 2026-10-08.
 
 This record covers **TT schematic-level verification**, not OSC layout, PVT, phase noise or tapeout signoff. Demonstration prompts are edited from actual requests and records; private environment identifiers are omitted.
