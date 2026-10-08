@@ -1,0 +1,70 @@
+{
+  "stages": [
+    {
+      "id": "connect", "skills": ["connect"], "verified": true,
+      "title": {"zh":"先连上，再明确工作范围","en":"Connect and define the workspace"},
+      "user": {"zh":"用 $virtuoso-connect 读取我的本地配置，连接虚拟机里的 Virtuoso。先检查连接和 API，只在我指定的工作库操作，保留已有设计。","en":"Use $virtuoso-connect to read my local configuration and connect to Virtuoso in my VM. Check connectivity and the installed API first. Work only in my designated library and preserve existing designs."},
+      "agent": {"zh":"我会分别核对 Python、bridge 配置、SSH 隧道和 CIW 监听，再发送只读命令验证。连接成功后记录当前版本与工作范围，原理图任务转给 testbench。","en":"I will check Python, bridge configuration, the SSH tunnel and the CIW listener separately, then verify a read-only command. After connecting, I will record the versions and workspace and hand schematic work to testbench."},
+      "output": {"zh":"连接链路已验证；测试记录使用 bridge 0.7.0、IC 6.1.8、Spectre 18.1。实际主机、账号、路径和 PDK 从使用者本地配置读取。","en":"The connection chain was verified with bridge 0.7.0, IC 6.1.8 and Spectre 18.1. Hosts, accounts, paths and PDK information come from the user's local configuration."},
+      "handoff": {"zh":"下一句可以直接提出电路任务，不用重新描述连接。","en":"The next message can describe the circuit task without repeating connection setup."}
+    },
+    {
+      "id": "spec", "skills": ["testbench", "helper"], "verified": true,
+      "title": {"zh":"把“做一个 OSC”变成可检查的目标","en":"Turn “build an OSC” into measurable goals"},
+      "user": {"zh":"先做一个五级 CMOS 环形振荡器，验证原理图级的完整闭环，暂时不画版图。你先提出参数需求，告诉我会怎么验证。","en":"Build a five-stage CMOS ring oscillator to exercise the full schematic-level loop. Leave layout for later. Propose the requirements and explain how you will verify them."},
+      "agent": {"zh":"本例使用 1.8 V、TT、27 ℃，目标 100 MHz ±10%，摆幅至少 1.6 V，平均供电功耗不超过 3 mW。五级共 10 个 MOS，每级加参数化负载；Wn、Wp 和 Cload 可调，L 固定 180 nm，Wp = 2 × Wn。","en":"This example uses 1.8 V, TT and 27 °C, targeting 100 MHz ±10%, at least 1.6 V swing and at most 3 mW average supply power. Five stages use 10 MOS devices and parameterized loads. Wn, Wp and Cload are tunable; L is 180 nm and Wp = 2 × Wn."},
+      "output": {"zh":"规格、变量关系和测量条件明确。随后建立 DUT／测试平台、供电与起振设置，先跑一轮基线。这里的尺寸和条件属于本例，不能直接用作其它 PDK 的默认值。","en":"Specifications, parameter relationships and measurement conditions are defined. The next step creates the DUT/testbench, supply and startup settings and measures a baseline. These sizes and conditions belong to this example, not other PDKs."},
+      "handoff": {"zh":"目标明确后，下一轮对话开始画图。","en":"Once goals are defined, the next turn begins schematic construction."}
+    },
+    {
+      "id": "schematic", "skills": ["testbench"], "verified": true,
+      "title": {"zh":"图画出来，还可以继续要求修改","en":"Review and revise the schematic"},
+      "user": {"zh":"原理图再紧凑一点。普通信号尽量用连续导线连接器件两端，不要用大量命名短线替代连接；VDD、GND 可以简化。参数文字别重叠。","en":"Make the schematic more compact. Connect ordinary signals with continuous wires between terminals rather than named stubs. VDD and GND may be simplified. Keep parameter labels readable."},
+      "agent": {"zh":"我会依据真实器件图形、端子和文字范围收紧五级间距，把电容贴近输出，供电轨与反馈线只留必要通道。排版后重新 Check & Save，读回每个 terminal 的 net，确认没有断线或短路。","en":"I will tighten stage spacing using actual device, terminal and label geometry, place capacitors near outputs and shorten supply and feedback routes. Then I will Check & Save and read back each terminal's net to verify connectivity."},
+      "output": {"zh":"真实原理图已创建、进一步收紧并核对连通性；最终图保留参数表达式与 Recommended 标注。几何修改后固定最终参数复跑，结果一致。","en":"The real schematic was created, tightened and checked for connectivity. It retains parameter expressions and Recommended annotations. A rerun after the geometry changes reproduced the final measurements."},
+      "image": "osc-schematic.png", "imageAlt": {"zh":"五级 CMOS OSC 的真实原理图与已验证推荐参数","en":"Actual five-stage CMOS OSC schematic with verified recommended values"},
+      "handoff": {"zh":"看过图以后，可以继续要求仿真、调参或局部修改。","en":"After reviewing the drawing, request simulation, tuning or a local revision."}
+    },
+    {
+      "id": "baseline", "skills": ["testbench"], "verified": true,
+      "title": {"zh":"先得到真实基线，再讨论怎么调","en":"Measure a real baseline before tuning"},
+      "user": {"zh":"配置 Maestro，跑 transient。用 OCEAN 读取本轮结果，告诉我频率、摆幅和平均功耗；不要拿旧 history 的结果来判断。","en":"Set up Maestro and run transient analysis. Read this run with OCEAN and report frequency, swing and average power. Do not evaluate it using an old history."},
+      "agent": {"zh":"仿真 500 ns，最大步长 50 ps，舍弃前 100 ns 起振段。SKILL/ADE 启动 Spectre，独立 OCEAN 子进程读取准确 history 的 OUT 与供电电流；标量与原始 CSV 再交叉核对。","en":"Run for 500 ns with a 50 ps maximum step, excluding the first 100 ns of startup. SKILL/ADE launches Spectre; an isolated OCEAN process reads OUT and supply current from the exact history. Scalars are cross-checked with raw CSV data."},
+      "output": {"zh":"基线 Wn/Wp = 2/4 µm、每级 C = 500 fF，频率 147.923 MHz、功耗 1.281 mW。频率超出 90–110 MHz 范围，因此还不能交付为达标结果。","en":"The baseline at Wn/Wp = 2/4 µm and 500 fF per stage measured 147.923 MHz and 1.281 mW. Frequency is outside 90–110 MHz, so this is not yet a passing result."},
+      "handoff": {"zh":"失败的基线也是下一轮调参的依据。","en":"A failing baseline still provides evidence for the next tuning decision."}
+    },
+    {
+      "id": "tuning", "skills": ["params", "testbench"], "verified": true,
+      "title": {"zh":"每轮看结果，再决定下一组参数","en":"Use each measurement to choose the next point"},
+      "user": {"zh":"用 $virtuoso-params 根据上一轮结果继续调，不要全组合扫参。可以混合 Agent 推理和贝叶斯优化，但要保留历史最佳，告诉我每次为什么改，以及有没有真正改善。","en":"Use $virtuoso-params to tune from the previous measurements without a Cartesian sweep. You may combine agent reasoning and Bayesian proposals, but retain the best measured point and explain every change and whether it actually improved."},
+      "agent": {"zh":"先增加负载把频率降到 101.345 MHz，再缩小器件、配合负载得到 100.907 MHz／0.757 mW。累计三组实测后做两次 GP 约束 EI 探索，分别得到 92.727 和 125.897 MHz；没有胜过已有点，超频候选被排除。随后依据实测周期模型精调。","en":"First, increasing load reduced frequency to 101.345 MHz. Smaller devices and a matching load then produced 100.907 MHz at 0.757 mW. After three real observations, two constrained GP/EI proposals measured 92.727 and 125.897 MHz. Neither beat the existing point; the latter was rejected. A local model of measured periods then guided refinement."},
+      "output": {"zh":"最终选用 Wn/Wp = 1.3/2.6 µm、C = 480 fF：100.480 MHz、0.823 mW。该点更贴近 100 MHz；0.757 mW 的早期可行点功耗更低。选择体现精度与功耗的权衡，并非所有指标都最优。完整八轮记录见 OSC 案例。","en":"The selected point uses Wn/Wp = 1.3/2.6 µm and C = 480 fF: 100.480 MHz at 0.823 mW. It is closer to 100 MHz; the earlier feasible point consumed only 0.757 mW. This is a precision/power tradeoff, not an optimum on every metric. The OSC case shows all eight evaluations."},
+      "handoff": {"zh":"搜索结束后还要独立复测，不能只展示模型预测。","en":"Search must be followed by an independent rerun, not just a model prediction."}
+    },
+    {
+      "id": "handoff", "skills": ["params", "testbench"], "verified": true,
+      "title": {"zh":"结果留下来，工程也能接着改","en":"Leave a result the user can keep editing"},
+      "user": {"zh":"把最佳可行参数应用到 Maestro，独立再跑一次。最终原理图、波形和 Maestro 数值都别关；把推荐的 Wn、Wp、负载及条件写在电路旁边，我以后打开还能找到。","en":"Apply the selected feasible parameters in Maestro and rerun independently. Leave the final schematic, waveform and Maestro values open. Save recommended Wn, Wp, load and conditions next to the circuit so I can find them later."},
+      "agent": {"zh":"独立复测和排版后确认均一致。最终界面绑定 Interactive.7，原理图永久保存 Recommended (verified) 注释，包含实际尺寸、供电、角点、温度、指标和结果标识。器件的 wn/wp 表达式保留，Maestro 变量填实际值。","en":"Independent validation and the post-layout-of-the-drawing check agree. Final views are bound to Interactive.7. The schematic stores Recommended (verified) annotations with actual dimensions, supply, corner, temperature, metrics and result ID. Device wn/wp expressions remain; Maestro variables hold the values."},
+      "output": {"zh":"100.480 MHz · 1.801 Vpp · 0.823 mW，频率误差 0.4801%。共 8 次真实仿真；最终参数保留应用，原理图／Maestro／ViVA 保持打开。","en":"100.480 MHz · 1.801 Vpp · 0.823 mW; frequency error 0.4801%. Eight real evaluations were completed. The selected values remain applied and schematic/Maestro/ViVA views remain open."},
+      "image": "osc-maestro.png", "imageAlt": {"zh":"真实 Maestro 测量结果及同一最终 history 的波形","en":"Actual Maestro measurements and waveform from the final history"},
+      "handoff": {"zh":"到这里完成了原理图闭环。下一轮可以问操作方法，也可以提出版图任务。","en":"The schematic loop is complete. A follow-up can ask for UI guidance or request layout."}
+    },
+    {
+      "id": "help", "skills": ["helper"], "verified": false,
+      "title": {"zh":"不懂界面时，随时插入一句帮助请求","en":"Ask for help at any point"},
+      "user": {"zh":"用 $virtuoso-helper 告诉我：图里的 wn/wp 应该换成固定数值吗？我想继续在 Maestro 调参，要怎么做？","en":"Use $virtuoso-helper: should I replace wn/wp in the drawing with fixed values? How can I continue tuning in Maestro?"},
+      "agent": {"zh":"保持变量即可。wn、wp 表示 MOS 宽度 W，L 已固定为 180 nm。在 Maestro 的 Global Variables 中使用 wn = 1.3u、wp = 2.6u、cload = 480f；修改 wn 时同时保持 wp = 2 × wn。想做固定尺寸版本时，再复制设计并替换变量。","en":"Keep the variables. wn/wp are MOS widths W; L is fixed at 180 nm. Use wn = 1.3u, wp = 2.6u and cload = 480f in Maestro Global Variables. Maintain wp = 2 × wn when editing. Make a copied fixed-size design only when you need one."},
+      "output": {"zh":"这是基于实际参数问答整理的帮助示例。helper 负责解释，不为纯说明启动 bridge，也不会把聊天文字当作一次新仿真。","en":"This guidance is adapted from the actual parameter discussion. Helper explains; it does not start a bridge for a conceptual answer or count a chat reply as a new simulation."},
+      "handoff": {"zh":"帮助请求不会中断工程；说明清楚后继续下一轮。","en":"A help request does not end the project; continue after the explanation."}
+    },
+    {
+      "id": "layout", "skills": ["layout", "testbench"], "verified": false,
+      "title": {"zh":"用下一段对话扩展到版图","en":"Extend the project to layout in a later turn"},
+      "user": {"zh":"现在用 $virtuoso-layout 基于已验证的原理图规划版图。先查我的 technology、PCell、层和 via，给出放置布线方案；后续分别报告 DRC、LVS、PEX，再交给 testbench 做后仿真。","en":"Now use $virtuoso-layout to plan layout from the validated schematic. Inspect my technology, PCells, layers and vias before proposing placement and routing. Report DRC, LVS and PEX separately, then hand post-layout simulation to testbench."},
+      "agent": {"zh":"我会先读取当前技术绑定与真实端子几何，依据你的 PDK 规划电源、器件排列和敏感走线。只有对应工具、许可与 rule deck 可用时才执行验证；每项保留本次日志，未运行的检查明确写未运行。","en":"I will read current technology binding and actual terminal geometry, then plan supplies, devices and sensitive routes according to your PDK. Checks require the appropriate tools, licenses and rule decks. Each check gets fresh evidence; unrun checks are marked as unrun."},
+      "output": {"zh":"后续用法示例，未执行本例 OSC 版图。本轮仅验证过基础矩形、标签和 via 操作；完整 DRC／LVS／PEX、后仿真和流片签核没有完成。","en":"This is a follow-up usage example, not an executed OSC layout. Basic rectangle, label and via operations were tested; full DRC/LVS/PEX, post-layout simulation and tapeout signoff were not completed."},
+      "handoff": {"zh":"五个技能按任务搭配使用，不要求每个工程都走完所有环节。","en":"Combine the five skills as the task needs; every project need not use all stages."}
+    }
+  ]
+}

@@ -10,11 +10,13 @@ test('reading filters reflect unique published record tags, including arbitrary 
  assert.doesNotMatch(html,/data-filter="(?:COT|Comparator|LDO|PMIC)"/);
  assert.equal((library('zh','reading',[]).match(/data-filter=/g)||[]).length,1);
 });
-test('AI workflows show categories without inventing cases, and only link published notes',()=>{
+test('AI workflows link reviewed case records and only link published notes',()=>{
  const data=JSON.parse(fs.readFileSync('content/ai-ic.json','utf8'));
  const html=ai('zh',data,[]);
- assert.equal((html.match(/class="workflow-empty"/g)||[]).length,4);
- assert.doesNotMatch(html,/workflow-steps|workflow-records/);
+ assert.equal((html.match(/class="workflow-empty"/g)||[]).length,0);
+ assert.match(html,/ai-ic\/virtuoso-workflow\/osc/);
+ assert.match(html,/ai-ic\/virtuoso-workflow\/mos/);
+ assert.match(html,/版图技能使用说明/);
  assert.match(html,/downloads\/analog-ic-notes.zip/);
  data.workflows[0].notes=['real','draft','missing'];
  const populated=ai('zh',data,[{type:'notes',slug:'real',lang:'zh',title:'真实记录',status:'published'},{type:'notes',slug:'draft',lang:'zh',title:'草稿记录',status:'draft'}]);

@@ -1,5 +1,15 @@
 # AI × IC 与公开下载
 
+## Virtuoso 多轮对话工作流
+
+第五个首页模块的工作流入口指向 `/zh/ai-ic/virtuoso-workflow/`，英文页面对应 `/en/`。`content/workflows/virtuoso/` 保存八轮示范对话，以及双语总览和 OSC／RC／MOS 案例。真实测量与后续用法示例分别标注。
+
+五个产品技能位于 `skills/virtuoso-workflow/`，GitHub 中的 README 包含可交给 Agent 的安装指令。`scripts/package-virtuoso.mjs` 按 `export-manifest.json` 导出完整套件；默认不包含个人配置和开发预设。五个技能目录必须同级，保留相对引用。
+
+`public/downloads/virtuoso-workflow.zip` 是供 GitHub 下载的已检查产品包；构建另生成 `dist/downloads/virtuoso-workflow.zip`。更改产品文件后，用新构建包更新前者；测试会核对两者的可复现字节。网站主要下载入口指向 GitHub 源码及 ZIP 页面。
+
+真实截图位于 `public/assets/virtuoso/`，发布前检查标题栏、项目／PDK 标识和图片元数据。MOS 案例仅有连通性及 CDF 读回，不能称为完整性能仿真。OSC 本例仅验证 TT 原理图，版图与物理签核未执行。
+
 工作流分类和技能卡片配置在 `content/ai-ic.json`。分类只展示已存在且已发布的笔记，空分类保持待补充。首页笔记、阅读与 AI × IC 保持独立章节。
 
 ## Analog IC Notes

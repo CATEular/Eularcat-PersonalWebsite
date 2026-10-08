@@ -1,5 +1,9 @@
 # Eularcat Personal Website
 
+**Eularcat，你的模拟 IC 伙伴。**
+
+新增 [Virtuoso 五技能工作流](skills/virtuoso-workflow/README.md)：用多轮对话完成连接、原理图、仿真、参数调整和结果交付。包含可直接交给 Agent 的安装指令，以及 [GitHub 下载包](public/downloads/virtuoso-workflow.zip)。五个技能为 connect、testbench、params、layout、helper；实际操作仍需外部 bridge、Cadence、许可和自己的 PDK。
+
 Eularcat 的双语个人技术网站，以 Markdown 保存学习笔记和论文阅读记录，包含学习地图、工具项目与 AI × IC 内容。主要研究方向是大电流 DC-DC Buck。
 
 ## 本地运行

@@ -8,7 +8,7 @@
     "dev": "node scripts/serve.mjs",
     "import": "node scripts/importer/index.mjs",
     "check": "node scripts/check.mjs",
-    "test": "node --test scripts/importer/importer.test.mjs scripts/content-ui.test.mjs scripts/importer/obsidian-paper.test.mjs scripts/skill-package.test.mjs",
+    "test": "node --test scripts/importer/importer.test.mjs scripts/content-ui.test.mjs scripts/importer/obsidian-paper.test.mjs scripts/skill-package.test.mjs scripts/virtuoso.test.mjs",
     "import:paper": "node scripts/importer/obsidian-paper.mjs"
   },
   "dependencies": {

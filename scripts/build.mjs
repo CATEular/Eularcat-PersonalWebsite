@@ -9,6 +9,8 @@ import {loadContent} from '../src/content.mjs';
 import matter from 'gray-matter';
 import {renderMarkdown} from '../src/markdown.mjs';
 import {packageSkill} from './package-skill.mjs';
+import {packageVirtuoso} from './package-virtuoso.mjs';
+import {virtuosoPage,virtuosoCasePage} from '../src/components/virtuoso.mjs';
 const root=process.cwd(),out=path.join(root,'dist'),site=JSON.parse(fs.readFileSync('content/site.json','utf8'));
 const aiContent=JSON.parse(fs.readFileSync('content/ai-ic.json','utf8'));
 const origin=process.env.SITE_ORIGIN||site.origin||'http://localhost:4321';
@@ -16,15 +18,18 @@ const items=loadContent(root), urls=[],search=[];
 // Recreate only this project's generated output so unpublished or removed notes cannot remain live.
 if(out!==path.resolve(root,'dist'))throw new Error('Invalid output directory');
 fs.rmSync(out,{recursive:true,force:true});
-fs.mkdirSync(out,{recursive:true});fs.cpSync('public',out,{recursive:true});fs.mkdirSync(path.join(out,'assets'),{recursive:true});fs.copyFileSync('src/styles/site.css',path.join(out,'assets/site.css'));fs.cpSync('node_modules/katex/dist',path.join(out,'assets/katex'),{recursive:true});
+fs.mkdirSync(out,{recursive:true});fs.cpSync('public',out,{recursive:true});fs.mkdirSync(path.join(out,'assets'),{recursive:true});fs.writeFileSync(path.join(out,'assets/site.css'),fs.readFileSync('src/styles/site.css','utf8')+'\n'+fs.readFileSync('src/styles/virtuoso.css','utf8'));fs.cpSync('node_modules/katex/dist',path.join(out,'assets/katex'),{recursive:true});
 fs.writeFileSync(path.join(out,'assets/highlight.css'),fs.readFileSync('node_modules/highlight.js/styles/github.css','utf8')+'\n'+fs.readFileSync('node_modules/highlight.js/styles/github-dark.css','utf8').replace(/\.hljs/g,'[data-theme="dark"] .hljs'));
 packageSkill(root,out);
+packageVirtuoso(root,out);
+const workflowDialogue=JSON.parse(fs.readFileSync('content/workflows/virtuoso/dialogue.json','utf8'));
 const about={},skillDocuments={};
 for(const lang of ['zh','en']){const source=fs.readFileSync(`content/about/${lang}.md`,'utf8'),doc=matter(source);about[lang]={...doc.data,...renderMarkdown(doc.content)};const skill=matter(fs.readFileSync(`content/skills/analog-ic-notes/${lang}.md`,'utf8'));skillDocuments[lang]={...skill.data,...renderMarkdown(skill.content)};}
 function write(route,html){const target=path.join(out,route,'index.html');fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,html);}
 function emit(lang,route,title,description,body,extra={}){const pathname=`/${lang}/${route}${route?'/':''}`;write(pathname,layout({lang,route,title,description,body,origin,...extra}));urls.push({path:pathname,lang,alternate:extra.alternate!==false});}
-for(const lang of ['zh','en']){const t=copy[lang];emit(lang,'',lang==='zh'?'模拟集成电路设计，借助 AI':'Analog IC Design, augmented by AI',t.intro,home(lang,site,items));
+for(const lang of ['zh','en']){const t=copy[lang];emit(lang,'',lang==='zh'?'Eularcat，你的模拟 IC 伙伴':'Eularcat, your analog IC companion',t.intro,home(lang,site,items));
  emit(lang,'learn',t.learning,t.learnPageIntro,pages.learn(lang,site,items));emit(lang,'reading',t.nav[1],t.readingIntro,pages.library(lang,'reading',items));emit(lang,'ai-ic','AI × IC',t.aiIntro,pages.ai(lang,aiContent,items));emit(lang,'ai-ic/analog-ic-notes','Analog IC Notes',skillDocuments[lang].description,pages.skillPage(lang,skillDocuments[lang]),{article:true});emit(lang,'projects',t.nav[3],t.projectIntro,pages.projects(lang,site));emit(lang,'notes',t.nav[4],t.notesIntro,pages.library(lang,'notes',items));emit(lang,'about','Eularcat',t.aboutIntro,pages.about(lang,about[lang]),{article:true});emit(lang,'projects/ic-schematics-studio','IC Schematics Studio',t.studioSummary,pages.studio(lang,site));emit(lang,'search',t.search,t.searchStart,pages.searchPage(lang));
+ for(const id of ['overview','osc','rc','mos']){const file=`content/workflows/virtuoso/${id}.${lang}.md`,source=fs.readFileSync(file,'utf8'),parsed=matter(source),doc={...parsed.data,...renderMarkdown(parsed.content)},route='ai-ic/virtuoso-workflow'+(id==='overview'?'':'/'+id);emit(lang,route,doc.title,doc.description,id==='overview'?virtuosoPage(lang,doc,workflowDialogue):virtuosoCasePage(lang,doc),{article:true});search.push({title:doc.title,description:doc.description,text:parsed.content,type:'ai-ic',lang,url:`/${lang}/${route}/`});}
  search.push({title:'Analog IC Notes',description:skillDocuments[lang].description,text:'skill 模拟 IC 论文笔记 Markdown Obsidian',type:'ai-ic',lang,url:`/${lang}/ai-ic/analog-ic-notes/`});
  for(const [i,r] of routes.entries())search.push({title:t.nav[i],description:[t.learnPageIntro,t.readingIntro,t.aiIntro,t.projectIntro,t.notesIntro,t.aboutIntro][i],text:t.nav[i],type:r,lang,url:`/${lang}/${r}/`});search.push({title:'IC Schematics Studio',description:t.studioSummary,text:'IC 原理图 绘图 Schematic browser web tool',type:'projects',lang,url:`/${lang}/projects/ic-schematics-studio/`});
  for(const group of site.learning)for(const topic of group.topics){const records=articlesForTopic(items,topic),article=records[0];search.push({title:lang==='zh'?topicZh[topic]||topic:topic,description:article?article.description||article.title:t.planned+' · '+t.unpublished,text:topic+' '+(topicZh[topic]||''),type:'learn',lang,url:article?articlePath(article):`/${lang}/learn/#${topic.toLowerCase().replace(/[^a-z0-9]+/g,'-')}`,status:article?'published':'planned'});}

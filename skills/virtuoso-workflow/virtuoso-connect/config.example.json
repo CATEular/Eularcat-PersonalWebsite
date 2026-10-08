@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "local": {
+    "bridge_python": "",
+    "scientific_python": "",
+    "bridge_source": "",
+    "bridge_env_file": "",
+    "skill_root": "",
+    "skill_scanner_root": "",
+    "project_workspace": ""
+  },
+  "bridge": {
+    "ssh_host": "",
+    "ssh_user": "",
+    "ssh_port": 22,
+    "local_port": null,
+    "remote_port": null,
+    "profile": null
+  },
+  "remote": {
+    "work_root": "",
+    "cds_lib": "",
+    "simulation_root": "",
+    "ocean_worker_root": "",
+    "executables": {
+      "ocean": "",
+      "spectre": ""
+    }
+  },
+  "design": {
+    "work_library": "",
+    "work_library_path": "",
+    "technology": ""
+  },
+  "pdk": {
+    "library": "",
+    "directory": "",
+    "devices": {},
+    "model_file": "",
+    "inherited_ade_sections": []
+  }
+}

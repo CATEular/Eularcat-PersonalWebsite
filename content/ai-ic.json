@@ -1,11 +1,150 @@
 {
   "workflows": [
-    {"id":"schematic","icon":"schematic","title":{"zh":"原理图绘制","en":"Schematic drawing"},"description":{"zh":"器件、连接与标注的过程记录","en":"Records of devices, connections and annotations"},"notes":[]},
-    {"id":"layout","icon":"layout","title":{"zh":"版图绘制","en":"Layout design"},"description":{"zh":"布局、布线与迭代中的实际尝试","en":"Practical attempts at placement, routing and iteration"},"notes":[]},
-    {"id":"simulation","icon":"simulation","title":{"zh":"仿真与分析","en":"Simulation & analysis"},"description":{"zh":"从测试设置到结果分析与回看","en":"From test setup to analysis and revisiting results"},"notes":[]},
-    {"id":"verification","icon":"verification","title":{"zh":"DRC / LVS","en":"DRC / LVS"},"description":{"zh":"规则检查、连通性核对与修改记录","en":"Design checks, connectivity verification and fixes"},"notes":[]}
+    {
+      "id": "schematic",
+      "icon": "schematic",
+      "title": {
+        "zh": "原理图绘制",
+        "en": "Schematic drawing"
+      },
+      "description": {
+        "zh": "器件、连接与标注的过程记录",
+        "en": "Records of devices, connections and annotations"
+      },
+      "notes": [],
+      "links": [
+        {
+          "path": "virtuoso-workflow/osc",
+          "label": {
+            "zh": "OSC：紧凑原理图与推荐标注",
+            "en": "OSC: compact wiring and saved values"
+          }
+        },
+        {
+          "path": "virtuoso-workflow/mos",
+          "label": {
+            "zh": "MOS：端子与 CDF 读回",
+            "en": "MOS: terminal and CDF readback"
+          }
+        }
+      ]
+    },
+    {
+      "id": "layout",
+      "icon": "layout",
+      "title": {
+        "zh": "版图绘制",
+        "en": "Layout design"
+      },
+      "description": {
+        "zh": "布局、布线与迭代中的实际尝试",
+        "en": "Practical attempts at placement, routing and iteration"
+      },
+      "notes": [],
+      "links": [
+        {
+          "path": "virtuoso-workflow/#virtuoso-layout",
+          "label": {
+            "zh": "版图技能使用说明",
+            "en": "Layout skill guide"
+          }
+        }
+      ]
+    },
+    {
+      "id": "simulation",
+      "icon": "simulation",
+      "title": {
+        "zh": "仿真与分析",
+        "en": "Simulation & analysis"
+      },
+      "description": {
+        "zh": "从测试设置到结果分析与回看",
+        "en": "From test setup to analysis and revisiting results"
+      },
+      "notes": [],
+      "links": [
+        {
+          "path": "virtuoso-workflow/rc",
+          "label": {
+            "zh": "RC：AC 与独立 OCEAN 测量",
+            "en": "RC: AC and isolated OCEAN"
+          }
+        },
+        {
+          "path": "virtuoso-workflow/osc",
+          "label": {
+            "zh": "OSC：八轮真实仿真闭环",
+            "en": "OSC: eight real evaluations"
+          }
+        }
+      ]
+    },
+    {
+      "id": "verification",
+      "icon": "verification",
+      "title": {
+        "zh": "DRC / LVS",
+        "en": "DRC / LVS"
+      },
+      "description": {
+        "zh": "规则检查、连通性核对与修改记录",
+        "en": "Design checks, connectivity verification and fixes"
+      },
+      "notes": [],
+      "links": [
+        {
+          "path": "virtuoso-workflow/#virtuoso-layout",
+          "label": {
+            "zh": "DRC／LVS／PEX：流程与验证边界",
+            "en": "DRC/LVS/PEX: flow and verification limits"
+          }
+        }
+      ]
+    }
   ],
   "skills": [
-    {"id":"analog-ic-notes","name":"Analog IC Notes","version":"1.0","description":{"zh":"把论文读成可回看的模拟 IC 笔记","en":"Turn papers into analog IC notes worth revisiting"},"tags":{"zh":["论文精读","电路分析","Markdown"],"en":["Paper reading","Circuit analysis","Markdown"]}}
+    {
+      "id": "virtuoso-workflow",
+      "name": "Virtuoso Workflow",
+      "version": "1.0",
+      "description": {
+        "zh": "五个技能在多轮对话中搭配使用，从连接到可继续修改的电路工程",
+        "en": "Five skills combined across multiple turns, from connection to an editable circuit project"
+      },
+      "tags": {
+        "zh": [
+          "五个 skills",
+          "多轮对话",
+          "OSC / RC / MOS"
+        ],
+        "en": [
+          "Five skills",
+          "Multiple turns",
+          "OSC / RC / MOS"
+        ]
+      }
+    },
+    {
+      "id": "analog-ic-notes",
+      "name": "Analog IC Notes",
+      "version": "1.0",
+      "description": {
+        "zh": "把论文读成可回看的模拟 IC 笔记",
+        "en": "Turn papers into analog IC notes worth revisiting"
+      },
+      "tags": {
+        "zh": [
+          "论文精读",
+          "电路分析",
+          "Markdown"
+        ],
+        "en": [
+          "Paper reading",
+          "Circuit analysis",
+          "Markdown"
+        ]
+      }
+    }
   ]
 }
