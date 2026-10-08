@@ -112,6 +112,8 @@ $$
 
 题设：理想同步 Buck，CCM；$V_{in}=12\,\mathrm V$、$V_o=1.2\,\mathrm V$、$f_s=500\,\mathrm{kHz}=5\times10^5\,\mathrm{Hz}$、$L=0.3\,\mathrm{\mu H}=3\times10^{-7}\,\mathrm H$、$I_{load}=10\,\mathrm A$。
 
+$m_{on}=(V_{in}-V_o)/L$、$m_{off}=-V_o/L$ 分别为上升段与下降段的电流斜率，单位为 A/s。
+
 | 待求量 | 公式 | 代入值（带单位） | 结果 |
 | --- | --- | --- | --- |
 | $D$ | $V_o/V_{in}$ | $1.2\,\mathrm V/12\,\mathrm V$ | $0.10=10\%$（无量纲） |
@@ -120,7 +122,7 @@ $$
 | $T_{off}$ | $(1-D)T_s$ | $0.90\times2.0\,\mathrm{\mu s}$ | $1.80\,\mathrm{\mu s}$ |
 | 上升斜率 | $(V_{in}-V_o)/L$ | $(12-1.2)\,\mathrm V/(0.3\,\mathrm{\mu H})$ | $+36\,\mathrm{A/\mu s}=+3.6\times10^7\,\mathrm{A/s}$ |
 | 下降斜率 | $-V_o/L$ | $-1.2\,\mathrm V/(0.3\,\mathrm{\mu H})$ | $-4\,\mathrm{A/\mu s}=-4\times10^6\,\mathrm{A/s}$ |
-| $\Delta i_L$ 峰峰值 | $m_{on}T_{on}=|m_{off}|T_{off}$ | $36\,\mathrm{A/\mu s}\times0.20\,\mathrm{\mu s}=4\,\mathrm{A/\mu s}\times1.80\,\mathrm{\mu s}$ | $7.2\,\mathrm A_{pp}$；两段一致 |
+| $\Delta i_L$ 峰峰值 | $m_{on}T_{on}=\lvert m_{off}\rvert T_{off}$ | $36\,\mathrm{A/\mu s}\times0.20\,\mathrm{\mu s}=4\,\mathrm{A/\mu s}\times1.80\,\mathrm{\mu s}$ | $7.2\,\mathrm A_{pp}$；两段一致 |
 | $I_{L,min}/I_{L,max}$ | $I_L\mp\Delta i_L/2$ | $10\,\mathrm A\mp7.2\,\mathrm A/2$ | $6.4\,\mathrm A/13.6\,\mathrm A$ |
 
 辅助检查：$R=0.12\,\Omega$；$i_C$ 范围为 $-3.6\sim+3.6\,\mathrm A$；$I_{L,min}>0$，CCM 假设成立。
