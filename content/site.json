@@ -1,5 +1,6 @@
 {
   "name": "Eularcat",
+  "origin": "https://eularcat.pages.dev",
   "studioUrl": "https://ic-schematic-studio.pages.dev/#editor",
   "learning": [
     {
@@ -12,10 +13,11 @@
         "en": "Power & circuit fundamentals"
       },
       "description": {
-        "zh": "从功率、电源与器件的基础问题开始，建立后续设计的理解",
-        "en": "A foundation in power, supplies and devices for the design work ahead"
+        "zh": "先从 Buck 功率级、分段电流与纹波开始，按实际学习记录扩展目录",
+        "en": "Start with the Buck power stage, current segments and ripple; expand the atlas as notes grow"
       },
       "topics": [
+        "Buck Power Stage Basics",
         "Power Fundamentals",
         "Power Devices",
         "Power Losses",

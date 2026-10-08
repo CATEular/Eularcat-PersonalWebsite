@@ -62,3 +62,5 @@ html{scroll-padding-top:8rem}body{overflow-wrap:break-word}button,input,textarea
 .article-sidebar{max-height:calc(100dvh - 8rem);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}.article-sidebar dl,.article-sidebar .citation{overflow-wrap:anywhere}
 .library-records .note-row>div{min-width:0}.library-records .note-row .metadata{white-space:normal;overflow-wrap:anywhere}
 @media(max-width:650px){.article-sidebar{max-height:none;overflow:visible}.article-sidebar nav{display:block;max-height:12rem;overflow-y:auto}.library-top{align-items:flex-start}.filter{max-width:100%;overflow-wrap:anywhere;text-align:left}.prose blockquote{padding:.75rem 1rem}.prose ol{padding-left:1.35rem}}
+
+.topic-notes{display:grid;gap:.45rem;margin-top:.55rem}.topic-notes a{font-size:.875rem;line-height:1.55}.topic-row:has(.topic-notes){align-items:flex-start}.topic-row:has(.topic-notes)>.status{margin-top:.2rem}

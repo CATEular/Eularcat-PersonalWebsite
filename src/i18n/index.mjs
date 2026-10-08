@@ -48,8 +48,8 @@ export const copy = {
     "aboutIntro": "我的主要研究方向是大电流 DC-DC Buck，也在探索 AI 与 EDA 工具的结合，这里记录学习、论文阅读与实际工程中的理解",
     "aboutMore": "关于 Eularcat",
     "footer": "一个持续生长的工程知识库",
-    "learnPageIntro": "从功率及电路基础，到同步 Buck、多相 Buck，另记录 AI 与 EDA 的学习和实践",
-    "statusNote": "尚未发布的主题保留为计划；有了真实笔记后，再补上内容",
+    "learnPageIntro": "按学习进度整理的笔记目录，从 Buck 功率级基础出发，逐步连接后续学习记录",
+    "statusNote": "学习地图是笔记目录：已发布主题直接链接到笔记，尚未整理的保留为计划。个人笔记也可以记录地图之外的问题",
     "readingIntro": "把论文的原始信息与自己的理解放在一起。保留问题，也保留重新阅读的线索",
     "notesIntro": "记录电路直觉、推导和实际工程中的问题。允许笔记先不完整，再逐渐整理",
     "noteCategories": [
@@ -184,8 +184,8 @@ export const copy = {
     "aboutIntro": "My primary research direction is high-current DC-DC Buck, alongside exploring AI with EDA tools. This site collects my study, paper notes and engineering work",
     "aboutMore": "About Eularcat",
     "footer": "An engineering knowledge base that keeps growing",
-    "learnPageIntro": "From power and circuit fundamentals to synchronous and multi-phase Buck, alongside AI and EDA learning and practice",
-    "statusNote": "Unwritten topics remain planned. Real notes will be added when they are ready",
+    "learnPageIntro": "A growing index of learning notes, starting with the Buck power stage and connecting later study records",
+    "statusNote": "The atlas is a note index: published topics link to notes, while unwritten topics remain planned. Personal notes can also explore questions outside the atlas",
     "readingIntro": "Publication details alongside my own understanding. Keeping the questions, and the reasons to read again",
     "notesIntro": "Circuit intuition, derivations and practical engineering records. Notes can begin unfinished and grow over time",
     "noteCategories": [
@@ -275,6 +275,7 @@ export const copy = {
 };
 export const routes = ["learn","reading","ai-ic","projects","notes","about"];
 export const topicZh = {
+  "Buck Power Stage Basics": "Buck 功率级基础 · 两状态、CCM / DCM 与纹波",
   "LDO": "低压差线性稳压器（LDO）",
   "Power Management IC": "功率管理 IC",
   "Power Sequencing": "电源时序",

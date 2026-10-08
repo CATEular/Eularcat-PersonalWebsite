@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {library,ai,about,learn} from '../src/components/pages.mjs';
+import {learningTiles} from '../src/components/home.mjs';
 import fs from 'node:fs';
 test('reading filters reflect unique published record tags, including arbitrary user tags',()=>{
  const html=library('zh','reading',[{type:'reading',lang:'zh',slug:'one',title:'One',tags:['用户自定义','Buck']},{type:'reading',lang:'zh',slug:'two',title:'Two',tags:['用户自定义']}]);
@@ -35,4 +36,21 @@ test('learning map follows the configured hierarchy and renders every group anch
  const html=learn('zh',site,[]);
  for(const group of site.learning){assert.ok(html.includes('id="'+group.category+'"'));assert.ok(html.includes(group.title.zh));}
  assert.ok(html.indexOf('功率及电路基础')<html.indexOf('同步 DC-DC Buck'));
+});
+test('atlas links existing notes and legacy learning articles while notes remain independent',()=>{
+ const site={learning:[{category:'power',code:'POWER',glyph:'P',eyebrow:'POWER',title:{zh:'基础',en:'Basics'},description:{zh:'目录',en:'Index'},topics:['Buck']} ]};
+ const records=[
+  {type:'notes',slug:'day-one',lang:'zh',title:'第一天',topic:'Buck',status:'published'},
+  {type:'learn',slug:'legacy',lang:'en',title:'Legacy',topic:'Buck',status:'published'},
+  {type:'notes',slug:'draft',lang:'zh',title:'未公开',topic:'Buck',status:'draft'},
+  {type:'notes',slug:'other',lang:'zh',title:'目录之外',status:'published'}
+ ];
+ for(const lang of ['zh','en']){
+  const html=learn(lang,site,records);
+  assert.match(html,/href="\/zh\/notes\/day-one\/"/);
+  assert.match(html,/href="\/en\/learn\/legacy\/"/);
+  assert.doesNotMatch(html,/未公开|notes\/other|learn\/day-one/);
+  assert.match(learningTiles(lang,site,records),lang==='zh'?/2 篇笔记/:/2 notes/);
+ }
+ assert.match(library('zh','notes',records.filter(x=>x.status==='published')),/notes\/other/);
 });

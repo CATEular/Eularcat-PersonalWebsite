@@ -4,13 +4,14 @@ import {copy,routes,topicZh} from '../src/i18n/index.mjs';
 import {layout,escape,pageHeader} from '../src/components/layout.mjs';
 import {home} from '../src/components/home.mjs';
 import * as pages from '../src/components/pages.mjs';
+import {articlesForTopic,articlePath} from '../src/learning.mjs';
 import {loadContent} from '../src/content.mjs';
 import matter from 'gray-matter';
 import {renderMarkdown} from '../src/markdown.mjs';
 import {packageSkill} from './package-skill.mjs';
 const root=process.cwd(),out=path.join(root,'dist'),site=JSON.parse(fs.readFileSync('content/site.json','utf8'));
 const aiContent=JSON.parse(fs.readFileSync('content/ai-ic.json','utf8'));
-const origin=process.env.SITE_ORIGIN||'http://localhost:4321';
+const origin=process.env.SITE_ORIGIN||site.origin||'http://localhost:4321';
 const items=loadContent(root), urls=[],search=[];
 // Recreate only this project's generated output so unpublished or removed notes cannot remain live.
 if(out!==path.resolve(root,'dist'))throw new Error('Invalid output directory');
@@ -26,7 +27,7 @@ for(const lang of ['zh','en']){const t=copy[lang];emit(lang,'',lang==='zh'?'模�
  emit(lang,'learn',t.learning,t.learnPageIntro,pages.learn(lang,site,items));emit(lang,'reading',t.nav[1],t.readingIntro,pages.library(lang,'reading',items));emit(lang,'ai-ic','AI × IC',t.aiIntro,pages.ai(lang,aiContent,items));emit(lang,'ai-ic/analog-ic-notes','Analog IC Notes',skillDocuments[lang].description,pages.skillPage(lang,skillDocuments[lang]),{article:true});emit(lang,'projects',t.nav[3],t.projectIntro,pages.projects(lang,site));emit(lang,'notes',t.nav[4],t.notesIntro,pages.library(lang,'notes',items));emit(lang,'about','Eularcat',t.aboutIntro,pages.about(lang,about[lang]),{article:true});emit(lang,'projects/ic-schematics-studio','IC Schematics Studio',t.studioSummary,pages.studio(lang,site));emit(lang,'search',t.search,t.searchStart,pages.searchPage(lang));
  search.push({title:'Analog IC Notes',description:skillDocuments[lang].description,text:'skill 模拟 IC 论文笔记 Markdown Obsidian',type:'ai-ic',lang,url:`/${lang}/ai-ic/analog-ic-notes/`});
  for(const [i,r] of routes.entries())search.push({title:t.nav[i],description:[t.learnPageIntro,t.readingIntro,t.aiIntro,t.projectIntro,t.notesIntro,t.aboutIntro][i],text:t.nav[i],type:r,lang,url:`/${lang}/${r}/`});search.push({title:'IC Schematics Studio',description:t.studioSummary,text:'IC 原理图 绘图 Schematic browser web tool',type:'projects',lang,url:`/${lang}/projects/ic-schematics-studio/`});
- for(const group of site.learning)for(const topic of group.topics)search.push({title:lang==='zh'?topicZh[topic]||topic:topic,description:t.planned+' · '+t.unpublished,text:topic+' '+(topicZh[topic]||''),type:'learn',lang,url:`/${lang}/learn/#${topic.toLowerCase().replace(/[^a-z0-9]+/g,'-')}`,status:'planned'});
+ for(const group of site.learning)for(const topic of group.topics){const records=articlesForTopic(items,topic),article=records[0];search.push({title:lang==='zh'?topicZh[topic]||topic:topic,description:article?article.description||article.title:t.planned+' · '+t.unpublished,text:topic+' '+(topicZh[topic]||''),type:'learn',lang,url:article?articlePath(article):`/${lang}/learn/#${topic.toLowerCase().replace(/[^a-z0-9]+/g,'-')}`,status:article?'published':'planned'});}
 }
 for(const item of items){emit(item.lang,`${item.type}/${item.slug}`,item.title,item.description||'',pages.article(item),{article:true,alternate:false});const target=path.join(out,item.lang,item.type,item.slug,'assets');if(fs.existsSync(path.join(item.dir,'assets')))fs.cpSync(path.join(item.dir,'assets'),target,{recursive:true});search.push({title:item.title,description:item.description||'',text:item.source,type:item.type,lang:item.lang,url:`/${item.lang}/${item.type}/${item.slug}/`,tags:item.tags||[]});}
 fs.writeFileSync(path.join(out,'search-index.json'),JSON.stringify(search));
