@@ -275,6 +275,7 @@ export const copy = {
 };
 export const routes = ["learn","reading","ai-ic","projects","notes","about"];
 export const topicZh = {
+  "Buck Load Transients": "负载阶跃与大电流瞬态",
   "Buck Power Stage Basics": "Buck 功率级基础 · 两状态、CCM / DCM 与纹波",
   "LDO": "低压差线性稳压器（LDO）",
   "Power Management IC": "功率管理 IC",

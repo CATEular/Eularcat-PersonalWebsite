@@ -34,11 +34,12 @@
         "en": "Synchronous DC-DC Buck"
       },
       "description": {
-        "zh": "学习同步 Buck 的工作方式、控制、环路与轻载运行",
-        "en": "Learning synchronous Buck operation, control, loop behavior and light-load modes"
+        "zh": "从同步 Buck 工作方式与负载阶跃出发，学习大电流瞬态、电荷回补、控制、环路与轻载运行",
+        "en": "Study synchronous Buck operation, load steps, high-current transients, charge recovery, control, loop behavior and light-load modes"
       },
       "topics": [
         "Synchronous DC-DC Buck",
+        "Buck Load Transients",
         "PWM",
         "COT",
         "AOT",
