@@ -1,5 +1,5 @@
 ---
-title: 'Day 1 · Buck 功率级：两状态、CCM / DCM 与纹波'
+title: 'Buck 功率级：两状态、CCM / DCM 与纹波'
 description: '整理 Buck 功率级的两种开关状态、分段电流、CCM / DCM 临界条件、LC 滤波与输出纹波，配合电路图、三周期波形和计算实例。'
 date: '2026-10-08'
 updated: '2026-10-08'
