@@ -51,18 +51,19 @@ $$
 
 $i_L$ 从电感流入输出节点，$I_o$ 从输出节点流向负载，$i_C$ 从输出节点流入电容支路。分压器电流在功率级计算中忽略，或计入 $I_o$。以理想电容上端相对地为正，得到：
 
-$$\boxed{i_C=i_L-I_o}$$
+$$\boxed{i_C=i_L-I_o}\tag{1}$$
 
 $$
 \begin{aligned}
 C\frac{dv_C}{dt}&=i_C,\\
 v_C(t)-v_C(t_0)&=\frac{1}{C}\int_{t_0}^{t}i_C(\tau)\,d\tau.
 \end{aligned}
+\tag{2}
 $$
 
 忽略 ESL 时，实际端口电压为：
 
-$$\boxed{v_o=v_C+R_{ESR}i_C}$$
+$$\boxed{v_o=v_C+R_{ESR}i_C}\tag{3}$$
 
 含 ESL 时还需加上 $L_{ESL}\,di_C/dt$。因此不能把快速边沿附近的所有尖峰都解释为 ESR，也不能把端口电压的跳变解释成理想电容电压跳变。
 
@@ -140,6 +141,7 @@ $$
 \Delta I&=\frac{(V_{in}-V_o)D}{Lf_s}\\
 &=\frac{V_o(1-D)}{Lf_s}.
 \end{aligned}
+\tag{4}
 $$
 
 恒定负载下，$\langle i_L\rangle=I_o$，所以 $i_C$ 是去掉直流分量的电感纹波。令 $u=t/T_s$：
@@ -179,6 +181,7 @@ $$
 &=\frac{\Delta I T_s}{8},\\
 \boxed{\Delta V_{C,pp}}&=\boxed{\frac{\Delta I}{8f_sC}}.
 \end{aligned}
+\tag{5}
 $$
 
 **系数 8 不要求 $D=0.5$。** 它来自零均值、峰谷对称、两段线性的三角电流面积。DCM、脉冲跳跃或明显变化的负载电流不满足这些前提时，需要重新积分。
@@ -192,6 +195,7 @@ $$
 \widetilde v_{ESR}(t)&=R_{ESR}i_C(t),\\
 \boxed{\Delta V_{ESR,pp}}&=\boxed{\Delta I R_{ESR}}.
 \end{aligned}
+\tag{6}
 $$
 
 常数且为正的 ESR 不引入时间积分，电压分量与电容电流具有相同的峰谷时刻、零点及三角形状。恒定负载下，交流电容电流与交流电感电流相同，因此也可称为与电感纹波电流同相。
@@ -222,7 +226,7 @@ $A+B$ 是这两个分量模型内的保守上界，不能覆盖模型遗漏的 E
 
 在光滑区间内，端口极值满足：
 
-$$\boxed{\frac{dv_o}{dt}=\frac{i_C}{C}+R_{ESR}\frac{di_C}{dt}=0.}$$
+$$\boxed{\frac{dv_o}{dt}=\frac{i_C}{C}+R_{ESR}\frac{di_C}{dt}=0.}\tag{7}$$
 
 还须检查开关切换处、周期边界和任何斜率不连续处。这些位置的极值不能仅靠设置导数为零得到。
 
@@ -235,6 +239,7 @@ $$
 \widetilde v_C(u)&=K\,[F(u)-\overline F],\\
 \overline F&=\frac{1-2D}{12},
 \end{aligned}
+\tag{8}
 $$
 
 $$
@@ -251,8 +256,11 @@ $F_{on}$ 用于 $0\le u\le D$，$F_{off}$ 用于 $D\le u\le1$。
 令 $r=R_{ESR}C/T_s$，两个区间的内部极值候选为：
 
 $$
-u_{min}=\frac D2-r,\qquad
-u_{max}=\frac{1+D}{2}-r.
+\begin{aligned}
+u_{min}&=\frac D2-r,\\
+u_{max}&=\frac{1+D}{2}-r.
+\end{aligned}
+\tag{9}
 $$
 
 第一式只有落在 $[0,D]$ 内才有效，第二式只有落在 $[D,1]$ 内才有效。将有效候选与 $u=0,D,1$ 一并比较，才能得到全周期峰谷。ESR 增大后，极值可能移到切换边界，因此并不存在一组适用于全部 ESR 和占空比的固定峰谷时刻。
@@ -262,7 +270,11 @@ $$
 当额外指定 $D=0.5$，有 $\overline F=0$。由 $A=\Delta I T_s/(8C)$ 和 $K=\Delta I T_s/C$ 可知 **$K=8A$**；$A$ 是电容积分项的峰峰值，$K$ 是归一化积分式的电压系数，两者不能直接互换。上坡内部 $0\le u\le1/2$：
 
 $$
-\widetilde v_o(u)=8A\left(u^2-\frac u2\right)+B\left(2u-\frac12\right).
+\begin{aligned}
+\widetilde v_o(u)&=8A\left(u^2-\frac u2\right)\\
+&\quad+B\left(2u-\frac12\right).
+\end{aligned}
+\tag{10}
 $$
 
 求导得到 $u_{min}=1/4-B/(8A)$，下坡的峰值晚半个周期。只有 $B<2A$ 时极值在区间内部；否则峰谷在切换边界。于是：
@@ -273,6 +285,7 @@ $$
 A+\dfrac{B^2}{4A},&B<2A,\\
 B,&B\ge2A.
 \end{cases}}
+\tag{11}
 $$
 
 两段在 $B=2A$ 处连续。**$B>A$ 只表示 ESR 分量峰峰值较大，不等于总纹波已经是纯三角波，也不等于总纹波必然等于 $B$。** 这个闭式结果依赖对称三角电流、常数 ESR 和无 ESL，不能套到任意占空比。
@@ -303,6 +316,7 @@ I_{C,rms}^2&=\frac1{T_s}\int_0^{T_s}i_C^2(t)\,dt=\frac{\Delta I^2}{12},\\
 I_{C,rms}&=\frac{\Delta I}{2\sqrt3},\\
 P_{ESR}&=\frac{\Delta I^2}{12}R_{ESR}.
 \end{aligned}
+\tag{12}
 $$
 
 本例 $I_{C,rms}=2.078\,\mathrm A$，两种 ESR 损耗分别为 **43.20 mW**、**4.32 mW**。这些结果仅为输出电容 ESR 损耗，不代表整个 Buck 的损耗或效率。
@@ -349,6 +363,7 @@ $$
 Z_C(s)&=\frac{1+sR_{ESR}C}{sC},\\
 f_{z,ESR}&=\frac{1}{2\pi R_{ESR}C}.
 \end{aligned}
+\tag{13}
 $$
 
 这是电容阻抗分子的左半平面零点。它也出现在常见 Buck 功率级的占空比到输出传递函数中。对 $C=100\,\mathrm{\mu F}$：
@@ -366,6 +381,7 @@ $$
 
 $$
 G_{vd}(s)=V_{in}\frac{1+sR_{ESR}C}{1+a_1s+a_2s^2}.
+\tag{14}
 $$
 
 其中：
@@ -419,9 +435,11 @@ $$\frac{dv_o}{dt}=\underbrace{\frac{i_C}{C}}_{\text{负}}+
 在指定三角电流模型中，上坡起点 $i_C=-\Delta I/2$，斜率为 $\Delta I/T_{on}$。若只要求这一瞬间端口斜率为正，有：
 
 $$
-\left.\frac{dv_o}{dt}\right|_{0^+}>0
-\quad\Longleftrightarrow\quad
-R_{ESR}C>\frac{T_{on}}2.
+\begin{aligned}
+&\left.\frac{dv_o}{dt}\right|_{0^+}>0\\
+&\quad\Longleftrightarrow\quad R_{ESR}C>\frac{T_{on}}2.
+\end{aligned}
+\tag{15}
 $$
 
 这是**某一时刻的波形斜率条件**，不是所有 COT 控制器的充分稳定性条件。若还要求整个关断段端口单调下降，则有另一个条件 $R_{ESR}C>T_{off}/2$。不能从一个局部不等式推出完整闭环没有次谐波、抖动或双脉冲。
@@ -453,7 +471,7 @@ $$\widetilde V_{FB}(s)=H_{FB}(s)\widetilde V_o(s)+\widetilde V_{inj}(s).$$
 
 三角电流下：
 
-$$I_{L,rms}^2=I_o^2+\frac{\Delta I^2}{12}.$$
+$$I_{L,rms}^2=I_o^2+\frac{\Delta I^2}{12}.\tag{16}$$
 
 忽略死区，两个线性区间具有相同的区间均方值，MOSFET 导通损耗为：
 
@@ -462,11 +480,12 @@ $$
 P_{HS,cond}&\approx D I_{L,rms}^2R_{HS},\\
 P_{LS,cond}&\approx(1-D)I_{L,rms}^2R_{LS}.
 \end{aligned}
+\tag{17}
 $$
 
 电感的最简估算是 $P_L\approx I_{L,rms}^2R_{DCR}+P_{core}$；高频交流绕组损耗需要另外评估。驱动功耗常用：
 
-$$P_{drive}\approx(Q_{g,H}+Q_{g,L})V_{drv}f_s.$$
+$$P_{drive}\approx(Q_{g,H}+Q_{g,L})V_{drv}f_s.\tag{18}$$
 
 这里的 $Q_g$ 是驱动电压和工作点对应的**栅极电荷**，单位为库仑，不是电容值。硬开关电压电流重叠的一阶估算为 $P_{overlap}\approx V_{in}I_{sw}(t_r+t_f)f_s/2$；实际还需区分器件的 $E_{oss}$、反向恢复、死区与软开关过程，避免重复计入同一换流能量。
 

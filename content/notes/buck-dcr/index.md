@@ -48,6 +48,7 @@ v_w&=L\frac{di_L}{dt}+R_Li_L,\\
 v_{L,ideal}&=L\frac{di_L}{dt},\\
 v_{DCR}&=R_Li_L.
 \end{aligned}
+\tag{1}
 $$
 
 $v_w$ 是可从电感外部两端测得的总电压；$v_{L,ideal}$ 和 $v_{DCR}$ 是等效模型内的分量。绕组内部一般没有可直接引出的“纯 DCR 两端”。
@@ -62,6 +63,7 @@ W_L&=\frac12Li_L^2,\\
 p_w&=v_wi_L\\
 &=\frac{dW_L}{dt}+R_Li_L^2.
 \end{aligned}
+\tag{2}
 $$
 
 理想电感可以吸收或返还能量；正电阻项 $R_Li_L^2\ge0$ 只能耗散能量。周期稳态中储能回到起点，因而绕组端口的平均输入功率等于这个模型中的电阻损耗。即使绕组端口电压在两个状态间正负交替，铜损也不会在关断状态变成负值。
@@ -105,6 +107,7 @@ $$
 DV_{in}&=V_o+R_LI_o,\\
 \boxed{V_o}&=\boxed{DV_{in}-R_LI_o}.
 \end{aligned}
+\tag{3}
 $$
 
 该平均关系不要求电感电流严格三角，但要求所声明的两状态、周期稳态、恒定参数及 $\langle i_L\rangle=I_o$。若把整个绕组端口错误地做零伏秒平衡，就会漏掉直流压降。
@@ -129,6 +132,7 @@ $$
 D_{req}&=\frac{V_o+I_oR_L}{V_{in}},\\
 \Delta D&=\frac{I_oR_L}{V_{in}}.
 \end{aligned}
+\tag{4}
 $$
 
 此处 $\Delta D$ 相对无 DCR 的理想值 $V_o/V_{in}$。控制器提高占空比是在输入侧提供额外能量，**不是把铜损消除**。实际还要加入功率管压降、死区、走线阻抗和控制器的最大占空比／最小关断时间限制。
@@ -154,6 +158,7 @@ $$
 \left.\frac{di_L}{dt}\right|_{on}&=\frac{V_{in}-V_o-R_Li_L}{L},\\
 \left.\frac{di_L}{dt}\right|_{off}&=\frac{-V_o-R_Li_L}{L}.
 \end{aligned}
+\tag{5}
 $$
 
 同一瞬时电流、输入与输出电压下，正 DCR 减小导通段的增流斜率，并使正电流关断段的下降斜率更负。但闭环调整占空比后，两段持续时间也会改变，不能由这一局部斜率判断总纹波必然减小。
@@ -175,6 +180,7 @@ $$
 i_0&=\frac{qI_a(1-p)+I_b(1-q)}{1-pq},\\
 i_1&=I_a+(i_0-I_a)p.
 \end{aligned}
+\tag{6}
 $$
 
 在电流上升／下降方向满足所设工作点时，$i_0$ 与 $i_1$ 是谷值、峰值，纹波为 $i_1-i_0$。$R_L\to0$ 时原始微分方程趋于恒斜率，两状态解趋于分段直线；上述含 $1/R_L$ 的表达式不宜直接用于零电阻数值计算。
@@ -188,6 +194,7 @@ $$
 \Delta I&\approx\frac{(V_{in}-V_o-R_LI_o)D}{Lf_s}\\
 &\approx\frac{(V_o+R_LI_o)(1-D)}{Lf_s}.
 \end{aligned}
+\tag{7}
 $$
 
 闭环采用 §3 的 $D$ 时，进一步得到：
@@ -226,7 +233,7 @@ $$
 
 零均值两段线性三角纹波时，$I_{ripple,rms}^2=\Delta I^2/12$，于是：
 
-$$\boxed{P_{DCR}\approx R_L\left(I_o^2+\frac{\Delta I^2}{12}\right).}$$
+$$\boxed{P_{DCR}\approx R_L\left(I_o^2+\frac{\Delta I^2}{12}\right).}\tag{8}$$
 
 该三角 RMS 关系不要求 $D=0.5$，但不能直接用于明显指数、DCM、跳脉冲或其他任意波形。对 §4 的指数解，可以直接积分 $i_L^2$；2 mΩ 与 20 mΩ 的模型内铜损分别为约 **0.13685 W**、**1.38767 W**。
 
@@ -281,7 +288,7 @@ $$
 
 取电阻负载 $R$、理想输出电容 $C_o$，忽略电容 ESR，绕组采用 $R_L+sL$。周期平均小信号功率级为：
 
-$$G_{vd}(s)=\frac{V_{in}}{a_0+a_1s+a_2s^2},$$
+$$G_{vd}(s)=\frac{V_{in}}{a_0+a_1s+a_2s^2},\tag{9}$$
 
 $$
 \begin{aligned}
@@ -328,11 +335,12 @@ V_w(s)&=(R_L+sL)I_L(s),\\
 \frac{V_s(s)}{V_w(s)}&=\frac1{1+s\tau_s},\\
 \frac{V_s(s)}{I_L(s)}&=R_L\frac{1+s\tau_L}{1+s\tau_s}.
 \end{aligned}
+\tag{10}
 $$
 
 所以匹配条件为：
 
-$$\boxed{R_sC_s=\frac L{R_L}}.$$
+$$\boxed{R_sC_s=\frac L{R_L}}.\tag{11}$$
 
 当 $\tau_s=\tau_L$ 时，理想模型内极点与零点抵消，得到 $v_s=R_Li_L$。RC 的低通作用消除了理想电感电压项的影响，而不是把电流信号一并滤成只有平均值。[TI TPS40130 的 DCR 检测章节](https://www.ti.com/lit/gpn/tps40130) 给出了相同时间常数关系，本文使用简化网络独立推导。
 
@@ -344,7 +352,7 @@ $$\tau_s\frac{dv_s}{dt}+v_s=L\frac{di_L}{dt}+R_Li_L.$$
 
 令误差 $e=v_s-R_Li_L$，在恒定参数下：
 
-$$\tau_s\frac{de}{dt}+e=(L-\tau_sR_L)\frac{di_L}{dt}.$$
+$$\tau_s\frac{de}{dt}+e=(L-\tau_sR_L)\frac{di_L}{dt}.\tag{12}$$
 
 时间常数匹配时右侧为零，故：
 
@@ -372,6 +380,7 @@ k&=\frac{R_2}{R_1+R_2},\\
 \tau_s&=(R_1\parallel R_2)C_s,\\
 \frac{V_s}{I_L}&=kR_L\frac{1+s\tau_L}{1+s\tau_s}.
 \end{aligned}
+\tag{13}
 $$
 
 匹配后的等效检测电阻为 $kR_L$，匹配时间常数使用 $R_1\parallel R_2$，不是简单地使用 $R_1$。[ADI LTC3859A 数据手册](https://www.analog.com/media/en/technical-documentation/data-sheets/ltc3859a.pdf) 展示了这种衰减型 DCR 网络。实际设计还须按所选控制器核对共模范围、输入偏置电流和极性。
@@ -424,7 +433,7 @@ $$\frac{\widehat I_L(s)}{I_L(s)}=\frac{1+s\tau_L}{1+s\tau_s}.$$
 
 铜绕组在一定温度范围内可作线性近似：
 
-$$R_L(T)\approx R_L(T_0)[1+\alpha(T-T_0)].$$
+$$R_L(T)\approx R_L(T_0)[1+\alpha(T-T_0)].\tag{14}$$
 
 $T$ 是绕组温度，$T_0$ 是 DCR 标定温度。铜的温度系数常约为 $0.0039\,\mathrm{K^{-1}}$；厂商给出的参考温度、导体材料与数据优先。[TI TPS40130](https://www.ti.com/lit/gpn/tps40130) 明确讨论了铜正温度系数对检测电压、限流及负载线的影响。
 
@@ -448,6 +457,7 @@ $$
 $$
 \frac{\widehat I_L(s)}{I_L(s)}
 =\frac{R_L(T)}{R_{cal}}\frac{1+sL(T)/R_L(T)}{1+s\tau_s}.
+\tag{15}
 $$
 
 长期恒定电流的增益为 $R_L(T)/R_{cal}$。本例未补偿时约高估 29.475%。同时，若 $L$ 仍为 0.3 µH，绕组时间常数由 150 µs 降至约 115.85 µs；固定室温 RC 不再动态匹配。
@@ -458,7 +468,7 @@ $$
 
 若有额外衰减系数 $k$，且实际网络在对应温度与工作点已匹配，简化峰值比较器满足：
 
-$$I_{peak,lim}\approx\frac{V_{th}}{kR_L(T)}.$$
+$$I_{peak,lim}\approx\frac{V_{th}}{kR_L(T)}.\tag{16}$$
 
 取 $k=1$、$V_{th}=24\,\mathrm{mV}$，忽略比较器失调、斜坡补偿、屏蔽时间与延迟，室温峰值阈值为 12 A，100 °C 时约为 **9.268 A**。该温度例假设动态匹配已维持；若 RC 仍固定在室温值，应把失配波形带入实际触发时刻，不能直接套用纯比例公式。
 
@@ -472,11 +482,11 @@ DCR 检测利用绕组已有电阻，不需在主功率路径再串一个检测�
 
 对基本 RC 网络，检测电阻损耗为：
 
-$$P_{R_s}=\left\langle\frac{(v_w-v_s)^2}{R_s}\right\rangle.$$
+$$P_{R_s}=\left\langle\frac{(v_w-v_s)^2}{R_s}\right\rangle.\tag{17}$$
 
 在 $\tau_s\gg T_s$、$v_s$ 的开关纹波相对输入方波很小的近似下，电阻承受的交流电压接近 $v_{SW}-DV_{in}$，所以：
 
-$$P_{R_s}\approx\frac{V_{in}^2D(1-D)}{R_s}.$$
+$$P_{R_s}\approx\frac{V_{in}^2D(1-D)}{R_s}.\tag{18}$$
 
 另取 $V_{in}=12\,\mathrm V$、$D=0.1$、$R_s=1.5\,\mathrm{k\Omega}$，得到约 **8.64 mW**。这是一阶估算，未计入检测输入负载及其他支路。电感 DCR 的已有损耗仍须另外计入。
 

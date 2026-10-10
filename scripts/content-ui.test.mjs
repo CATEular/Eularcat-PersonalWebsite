@@ -4,6 +4,17 @@ import {library,ai,about,learn} from '../src/components/pages.mjs';
 import {learningTiles} from '../src/components/home.mjs';
 import fs from 'node:fs';
 import {renderMarkdown} from '../src/markdown.mjs';
+
+test('Buck ESR and DCR key equations have sequential, renderable numbers',()=>{
+ for(const slug of ['buck-esr-ripple','buck-dcr']){
+  const source=fs.readFileSync(`content/notes/${slug}/index.md`,'utf8');
+  const numbers=[...source.matchAll(/\\tag\{(\d+)\}/g)].map(match=>Number(match[1]));
+  assert.deepEqual(numbers,Array.from({length:18},(_,index)=>index+1),slug);
+  const html=renderMarkdown(source).html;
+  assert.doesNotMatch(html,/katex-error/,slug);
+  assert.equal((html.match(/class="tag"/g)||[]).length,18,slug);
+ }
+});
 test('published Virtuoso prose renders emphasis instead of literal Markdown markers',()=>{
  const root='content/workflows/virtuoso';
  for(const file of fs.readdirSync(root).filter(name=>name.endsWith('.md'))){
