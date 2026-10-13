@@ -2,7 +2,7 @@
 title: 'Buck 功率级：两状态、CCM / DCM 与纹波'
 description: '整理 Buck 功率级的两种开关状态、分段电流、CCM / DCM 临界条件、LC 滤波与输出纹波，配合电路图、三周期波形和计算实例。'
 date: '2026-10-08'
-updated: '2026-10-08'
+updated: '2026-10-13'
 lang: zh
 type: note
 category: knowledge
@@ -56,8 +56,10 @@ OFF 路径：地 $\to Q_L\to SW\to L\to$ 输出节点 → 负载 → 地。**正
 基本关系：
 
 $$
-v_L=L\frac{di_L}{dt},\qquad
+\begin{gathered}
+v_L=L\frac{di_L}{dt},\\
 i_L(t_2)-i_L(t_1)=\frac{1}{L}\int_{t_1}^{t_2}v_L(t)\,dt
+\end{gathered}
 $$
 
 有限电压可以阶跃；电感电流不能跳变。恒定电感电压对应恒定电流斜率。
@@ -65,15 +67,19 @@ $$
 **ON 段**，$0\le t\le DT_s$：
 
 $$
-v_L=V_{in}-V_o,\quad T_{on}=DT_s,\quad
+\begin{gathered}
+v_L=V_{in}-V_o,\qquad T_{on}=DT_s,\\
 i_L(t)=I_{L,min}+\frac{V_{in}-V_o}{L}t
+\end{gathered}
 $$
 
 **OFF 段**，令 $\tau=t-DT_s$，$0\le\tau\le(1-D)T_s$：
 
 $$
-v_L=-V_o,\quad T_{off}=(1-D)T_s,\quad
+\begin{gathered}
+v_L=-V_o,\qquad T_{off}=(1-D)T_s,\\
 i_L(t)=I_{L,max}-\frac{V_o}{L}\tau
+\end{gathered}
 $$
 
 “斜率 × 时间”给出该段的电流变化量；瞬时电流还需加上段首电流。
@@ -102,8 +108,10 @@ I_L=\frac{1}{T_s}\int_0^{T_s}i_L(t)\,dt
 $$
 
 $$
-I_{L,max}=I_L+\frac{\Delta i_L}{2},\qquad
-I_{L,min}=I_L-\frac{\Delta i_L}{2}
+\begin{aligned}
+I_{L,max}&=I_L+\frac{\Delta i_L}{2},\\
+I_{L,min}&=I_L-\frac{\Delta i_L}{2}.
+\end{aligned}
 $$
 
 本页 CCM 示例要求 $I_{L,min}>0$。以上峰谷值对称式用于完整周期的两段三角波；不能直接套到有零电流平台的 DCM。
@@ -129,7 +137,7 @@ $m_{on}=(V_{in}-V_o)/L$、$m_{off}=-V_o/L$ 分别为上升段与下降段的电�
 
 ## 5. 五行波形：看连续三个周期
 
-![理想同步 Buck 在三个连续周期内的上管门控、SW、电感电流、电容电流及理想电容电压](./assets/buck-ccm-waveforms.png "图 2 · 同一线性时间轴、三个连续周期。D = 10%，上升短而陡、下降长而缓；电容电压在 iC = 0 处取极值。")
+![理想同步 Buck 在三个连续周期内的上管门控、SW、电感电流、电容电流及理想电容电压](./assets/buck-ccm-waveforms.png "图 2 · 同一线性时间轴、三个连续周期。D = 10%，上升短而陡、下降长而缓；电容电压在 iC = 0 处取极值。最下面电压形状归一化到 0–1，采用任意单位，不表示 1 V 纹波。")
 
 每个周期从 $t=nT_s$ 开始。局部时间 $\tau=t-nT_s$：
 
@@ -158,23 +166,29 @@ $$
 令 $t_1$ 为 $i_C$ 由负变正的时刻，$t_2$ 为由正变负的时刻。正电流三角形面积记为 $S_+$（单位 A·s，即电荷 C）：
 
 $$
-S_+=\int_{t_1}^{t_2}i_C(t)\,dt
-=\frac12\cdot\frac{\Delta i_L}{2}\cdot\frac{T_s}{2}
-=\frac{\Delta i_LT_s}{8}
+\begin{aligned}
+S_+&=\int_{t_1}^{t_2}i_C(t)\,dt\\
+&=\frac12\cdot\frac{\Delta i_L}{2}\cdot\frac{T_s}{2}\\
+&=\frac{\Delta i_LT_s}{8}.
+\end{aligned}
 $$
 
 $$
-\Delta v_{C,pp}=\frac{S_+}{C}
-=\frac{\Delta i_LT_s}{8C}
-=\frac{\Delta i_L}{8f_sC}
-=\frac{V_o(1-D)T_s^2}{8LC}
+\begin{aligned}
+\Delta v_{C,pp}&=\frac{S_+}{C}\\
+&=\frac{\Delta i_LT_s}{8C}\\
+&=\frac{\Delta i_L}{8f_sC}\\
+&=\frac{V_o(1-D)T_s^2}{8LC}.
+\end{aligned}
 $$
 
 加入电容 ESR $R_C$，忽略 ESL：
 
 $$
-v_o(t)=v_C(t)+i_C(t)R_C,\qquad
-\Delta v_{ESR,pp}=\Delta i_LR_C
+\begin{gathered}
+v_o(t)=v_C(t)+i_C(t)R_C,\\
+\Delta v_{ESR,pp}=\Delta i_LR_C.
+\end{gathered}
 $$
 
 $$
@@ -198,8 +212,10 @@ $$
 临界点用 CCM 纹波计算：
 
 $$
-I_{L,crit}=\frac{\Delta i_{L,CCM}}{2}
-=\frac{V_o(1-D)T_s}{2L}
+\begin{aligned}
+I_{L,crit}&=\frac{\Delta i_{L,CCM}}{2}\\
+&=\frac{V_o(1-D)T_s}{2L}.
+\end{aligned}
 $$
 
 | 模式（正向供电） | 条件 | 波形 |
@@ -211,8 +227,10 @@ $$
 由 $V_o/R=V_o(1-D)T_s/(2L)$：
 
 $$
-R_{crit}=\frac{2L}{(1-D)T_s},\qquad
-L_{crit}=\frac{(1-D)RT_s}{2}
+\begin{gathered}
+R_{crit}=\frac{2L}{(1-D)T_s},\\
+L_{crit}=\frac{(1-D)RT_s}{2}.
+\end{gathered}
 $$
 
 固定 $D,L,T_s$：$R>R_{crit}$ 为 DCM；固定 $D,R,T_s$：$L<L_{crit}$ 为 DCM。$R_{crit}$ 的单位为 Ω，$L_{crit}$ 的单位为 H。
@@ -230,21 +248,28 @@ $$
 零电流段两管关断，理想情况下 $v_{SW}=V_o$；实际节点可能振铃，本页不展开。
 
 $$
-I_{L,max}=\frac{V_{in}-V_o}{L}DT_s
-=\frac{V_o}{L}D_1T_s,\qquad I_{L,min}=0
+\begin{aligned}
+I_{L,max}&=\frac{V_{in}-V_o}{L}DT_s\\
+&=\frac{V_o}{L}D_1T_s,\\
+I_{L,min}&=0.
+\end{aligned}
 $$
 
 $$
-(V_{in}-V_o)D=V_oD_1
-\quad\Rightarrow\quad M=\frac{D}{D+D_1}
+\begin{gathered}
+(V_{in}-V_o)D=V_oD_1,\\
+M=\frac{D}{D+D_1}.
+\end{gathered}
 $$
 
 对一个完整周期取三角形面积 $S_L$：
 
 $$
-I_L=I_{load}=\frac{V_o}{R}
-=\frac{S_L}{T_s}
-=\frac12I_{L,max}(D+D_1)
+\begin{aligned}
+I_L=I_{load}&=\frac{V_o}{R}\\
+&=\frac{S_L}{T_s}\\
+&=\frac12I_{L,max}(D+D_1).
+\end{aligned}
 $$
 
 联立后：
@@ -272,16 +297,20 @@ Z_p=\frac{1}{sC}\parallel R
 $$
 
 $$
-F(s)=\frac{V_o(s)}{V_{SW}(s)}
-=\frac{Z_p}{sL+Z_p}
-=\frac{1}{1+\frac{sL}{R}+s^2LC}
-=\frac{1}{1+\frac{s}{Q\omega_0}+\frac{s^2}{\omega_0^2}}
+\begin{aligned}
+F(s)&=\frac{V_o(s)}{V_{SW}(s)}\\
+&=\frac{Z_p}{sL+Z_p}\\
+&=\frac{1}{1+\frac{sL}{R}+s^2LC}\\
+&=\frac{1}{1+\frac{s}{Q\omega_0}+\frac{s^2}{\omega_0^2}}.
+\end{aligned}
 $$
 
 $$
-\omega_0=\frac{1}{\sqrt{LC}},\qquad
-f_0=\frac{\omega_0}{2\pi},\qquad
-Q=R\sqrt{\frac{C}{L}}
+\begin{gathered}
+\omega_0=\frac{1}{\sqrt{LC}},\\
+f_0=\frac{\omega_0}{2\pi},\\
+Q=R\sqrt{\frac{C}{L}}.
+\end{gathered}
 $$
 
 | 量 | 含义 |
@@ -294,12 +323,23 @@ $$
 
 **该传递函数的输入为 SW 电压。** 开关 Buck 的电源到输出关系还包含占空比与工作模式。
 
-## 9. 自测
+## 9. 第二组算例与模式核算
 
-1. 对理想 Buck，写出占空比与输入、输出电压的关系，并列出成立所需的工作模式和理想化条件。
-2. 电感两端突然施加恒定正电压后，电感电流和电感电压中哪一个可以立即变化？说明原因，写出基本关系。
-3. 对理想同步 Buck，分别描述上管、下管导通时的电流路径，以及 SW 电压、电感电压和电流变化方向。
-4. 理想同步 Buck，CCM：$V_{in}=9\,\mathrm V$、$V_o=1.5\,\mathrm V$、$f_s=600\,\mathrm{kHz}$、$L=0.5\,\mathrm{\mu H}$、$I_{load}=5\,\mathrm A$。计算 $D$、$T_{on}$、$\Delta i_L$、$I_{L,max}/I_{L,min}$；有量纲的结果带单位。
+理想同步 Buck，$V_{in}=9\,\mathrm V$、$V_o=1.5\,\mathrm V$、$f_s=600\,\mathrm{kHz}$、$L=0.5\,\mathrm{\mu H}$、$I_{load}=5\,\mathrm A$，先按两状态 CCM 求解，再核对模式：
+
+| 量 | 结果 | 核对依据 |
+| --- | --- | --- |
+| 占空比 D | 1/6，约 16.67% | 理想 CCM 的伏秒平衡 |
+| 周期 | 1.6667 µs | $1/f_s$ |
+| 导通／关断时间 | 0.2778／1.3889 µs | $DT_s$ 与 $(1-D)T_s$ |
+| 电流上坡／下坡 | +15／−3 A/µs | $(V_{in}-V_o)/L$ 与 $-V_o/L$ |
+| 电流纹波峰峰值 | 4.1667 A | 两段分别得到相同电流变化量 |
+| 电感谷值／峰值 | 2.9167／7.0833 A | 平均电流加减半个纹波 |
+| 临界负载电流 | 2.0833 A | 正电流临界条件 $I_{crit}=\Delta i_L/2$ |
+
+谷值大于零，5 A 工作点的 CCM 假设自洽。负载低于临界值时，若控制器禁止负电流，需要转用 DCM 模型；若强制互补导通，电流可跨零而继续保持两状态。
+
+理想 LC 传递函数描述的是给定开关节点电压如何被滤波，不能直接给出闭环稳定时间。进入 [负载阶跃笔记](/zh/notes/buck-day-02/) 可继续用电荷积分分析瞬态；[ESR 笔记](/zh/notes/buck-esr-ripple/) 则补充输出端口的电阻纹波与极值错位。
 
 ## 10. 参考资料
 
