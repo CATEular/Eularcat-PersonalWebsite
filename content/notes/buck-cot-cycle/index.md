@@ -323,6 +323,8 @@ $$\frac{dv_o}{dt}=\frac{i_C}{C}+R_{ESR}\frac{di_C}{dt}.\tag{15}$$
 
 若要进一步判断反馈波形为什么交越、低 ESR 如何改变局部斜率，以及注入网络会带来什么影响，可继续阅读 [COT 纹波反馈：低 ESR、触发抖动与人工纹波注入](/zh/notes/buck-cot-ripple/)。其中区分比较器的局部时间误差、实际开通许可与完整闭环稳定性。
 
+若要继续拆解 one-shot 内部怎样形成导通时间，可阅读 [COT/AOT 中的 Fixed On-Time Timer 设计](/zh/notes/buck-on-time-timer/)。它从恒流充电和电容初值讲起，进一步分析比较器延迟、复位残压、抖动，以及命令脉宽与功率管有效导通时间的差别。
+
 ## 参考资料
 
 1. Microchip, [Constant On-Time Control](https://developerhelp.microchip.com/xwiki/bin/view/applications/power/mastering-buck-converters/analog-control-methods/cot/)，重点参照 COT Control Details 的 one-shot 与反馈终止关断段说明。页面开头包含迟滞控制的概括性描述；本文正常关断采用明确的定时模型。

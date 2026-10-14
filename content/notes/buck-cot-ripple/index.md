@@ -422,6 +422,8 @@ $$S_e=\frac{dv_{sense}}{dt}-\frac{dv_{th}}{dt}.\tag{17}$$
 
 [TI SNVA874](https://www.ti.com/lit/an/snva874/snva874.pdf) 从频域分析 Type-3 注入网络，说明应将注入形成的动态与功率级、定时延迟共同考虑。稳定性检查需要包含 $L$、有效 $C$、ESR、$T_{on}$、最小关断约束、传播延迟、反馈网络、负载与工作模式；参数不足时无法定量判断。
 
+反馈比较器主要影响下一次脉冲的开始请求；导通定时器中的比较器则影响本次脉冲的结束。两处都可以用局部斜率理解时间扰动，具体电路和误差来源不同。后续可阅读 [COT/AOT 中的 Fixed On-Time Timer 设计](/zh/notes/buck-on-time-timer/)，把纹波触发接到恒流充电、复位和自适应定时。
+
 ## 参考资料
 
 1. Texas Instruments, [TPS51125 Datasheet, Rev. H, SLUS786H](https://www.ti.com/lit/ds/symlink/tps51125.pdf)，§7.3.1–7.3.4，印刷第 17–18 页。
