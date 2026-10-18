@@ -34,11 +34,12 @@
         "en": "Synchronous DC-DC Buck"
       },
       "description": {
-        "zh": "从同步 Buck 工作方式与负载阶跃出发，学习大电流瞬态、电荷回补、控制、环路与轻载运行",
-        "en": "Study synchronous Buck operation, load steps, high-current transients, charge recovery, control, loop behavior and light-load modes"
+        "zh": "从同步 Buck 工作方式与负载阶跃出发，学习死区与栅极驱动、大电流瞬态、电荷回补、控制、环路与轻载运行",
+        "en": "Study synchronous Buck operation, load steps, dead time and gate drive, high-current transients, charge recovery, control, loop behavior and light-load modes"
       },
       "topics": [
         "Synchronous DC-DC Buck",
+        "Buck Gate Drive and Dead Time",
         "Buck Load Transients",
         "PWM",
         "COT",
