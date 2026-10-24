@@ -73,11 +73,11 @@ Deliver concrete steps and explanations. Bindkeys depend on editor and local cus
 
 ### Give your agent one installation prompt
 
-Visit the [five-skill source directory on GitHub](https://github.com/CATEular/Eularcat-PersonalWebsite/tree/main/skills/virtuoso-workflow), or open the [GitHub ZIP page](https://github.com/CATEular/Eularcat-PersonalWebsite/blob/main/public/downloads/virtuoso-workflow.zip) and download the raw file. The public repository requires no login.
+Visit the [five-skill source directory on GitHub](https://github.com/CATEular/skill/tree/main/skills/virtuoso-workflow), or open the [GitHub ZIP page](https://github.com/CATEular/skill/blob/main/downloads/virtuoso-workflow.zip) and download the raw file. The public repository requires no login.
 
 ```text
 Read skills/virtuoso-workflow/README.md and export-manifest.json from the main branch
-of https://github.com/CATEular/Eularcat-PersonalWebsite and download the listed files.
+of https://github.com/CATEular/skill and download the listed files.
 Review all five SKILL.md files, scripts and dependencies. Install virtuoso-connect,
 virtuoso-testbench, virtuoso-params, virtuoso-layout and virtuoso-helper as siblings
 in a supported skill directory. Codex supports ~/.agents/skills/ for user skills
@@ -149,7 +149,7 @@ Verify read-only connectivity, then try the [RC case](./rc/). Once AC/OCEAN read
 
 ## Download contents and references
 
-GitHub provides inspectable source and a ZIP with an [explicit manifest](https://github.com/CATEular/Eularcat-PersonalWebsite/blob/main/skills/virtuoso-workflow/export-manifest.json) and attribution. No private config, credentials, PDK model, project log or website development preset is included.
+GitHub provides inspectable source and a ZIP with an [explicit manifest](https://github.com/CATEular/skill/blob/main/skills/virtuoso-workflow/export-manifest.json) and attribution. No private config, credentials, PDK model, project log or website development preset is included.
 
 Recorded validation used bridge 0.7.0, IC 6.1.8 and Spectre 18.1. OCEAN readers depend on an internal bridge SSH runner; inspect compatibility after upgrades. Version-specific fallback APIs are not universal guarantees.
 

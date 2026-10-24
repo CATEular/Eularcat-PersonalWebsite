@@ -81,12 +81,12 @@ Agent 给出具体操作顺序、如何判断完成和要查的文档。快捷�
 
 ### 给 Agent 一段话来安装
 
-访问 [GitHub 中的五技能目录](https://github.com/CATEular/Eularcat-PersonalWebsite/tree/main/skills/virtuoso-workflow)，或打开 [GitHub ZIP 下载页](https://github.com/CATEular/Eularcat-PersonalWebsite/blob/main/public/downloads/virtuoso-workflow.zip)，点击下载原文件。公开仓库不需要登录。
+访问 [GitHub 中的五技能目录](https://github.com/CATEular/skill/tree/main/skills/virtuoso-workflow)，或打开 [GitHub ZIP 下载页](https://github.com/CATEular/skill/blob/main/downloads/virtuoso-workflow.zip)，点击下载原文件。公开仓库不需要登录。
 
 把下面整段复制给有本地文件与终端能力的 Agent：
 
 ```text
-请从 https://github.com/CATEular/Eularcat-PersonalWebsite 的 main 分支读取
+请从 https://github.com/CATEular/skill 的 main 分支读取
 skills/virtuoso-workflow/README.md 和 export-manifest.json，按清单下载五个技能。
 先检查 SKILL.md、脚本和依赖，再把 virtuoso-connect、virtuoso-testbench、
 virtuoso-params、virtuoso-layout、virtuoso-helper 放在同一技能父目录下。
@@ -157,7 +157,7 @@ python -m pip install -r requirements-optional.txt
 
 ## 下载内容与参考
 
-GitHub 提供可检查源码与 ZIP；保留 [完整文件清单](https://github.com/CATEular/Eularcat-PersonalWebsite/blob/main/skills/virtuoso-workflow/export-manifest.json) 和来源说明。包里没有私有配置、凭据、PDK 模型、项目日志或网站开发 Agent 预设。
+GitHub 提供可检查源码与 ZIP；保留 [完整文件清单](https://github.com/CATEular/skill/blob/main/skills/virtuoso-workflow/export-manifest.json) 和来源说明。包里没有私有配置、凭据、PDK 模型、项目日志或网站开发 Agent 预设。
 
 记录中的运行环境是 bridge 0.7.0、IC 6.1.8、Spectre 18.1。OCEAN 提取器用到 bridge 内部 SSH runner，升级后要检查兼容性；示例里的替代接口不是跨版本保证。
 

@@ -14,7 +14,7 @@ Connect → create a testbench → measure → tune from feedback → independen
 
 把下面这段话交给有本地文件和终端能力的 Codex 或 Agent：
 
-> 请从 https://github.com/CATEular/Eularcat-PersonalWebsite 的 main 分支读取 skills/virtuoso-workflow/README.md 和 export-manifest.json，按文件清单下载这套 Virtuoso 工作流。先检查五个 SKILL.md 和脚本，再把 virtuoso-connect、virtuoso-testbench、virtuoso-params、virtuoso-layout、virtuoso-helper 放到同一个技能父目录；Codex 可使用用户级 ~/.agents/skills/ 或项目级 .agents/skills/。不要覆盖同名技能或已有 config.local.json；若发现旧版，先列出差异。把 config.example.json 复制为 virtuoso-connect/config.local.json，帮我确认并填写自己的 Python、bridge .env 位置、虚拟机连接、授权工作库、PDK 和仿真目录，不猜路径、不输出凭据。先复用已有 virtuoso_bridge；没有时按外部 bridge 官方说明在独立 Python 环境安装，核对当前版本接口。安装后验证五个技能可发现、相对引用完整，使用 api_probe.py 检查本地 API，再按 virtuoso-connect 做只读连接验证，报告成功项与缺失配置。
+> 请从 https://github.com/CATEular/skill 的 main 分支读取 skills/virtuoso-workflow/README.md 和 export-manifest.json，按文件清单下载这套 Virtuoso 工作流。先检查五个 SKILL.md 和脚本，再把 virtuoso-connect、virtuoso-testbench、virtuoso-params、virtuoso-layout、virtuoso-helper 放到同一个技能父目录；Codex 可使用用户级 ~/.agents/skills/ 或项目级 .agents/skills/。不要覆盖同名技能或已有 config.local.json；若发现旧版，先列出差异。把 config.example.json 复制为 virtuoso-connect/config.local.json，帮我确认并填写自己的 Python、bridge .env 位置、虚拟机连接、授权工作库、PDK 和仿真目录，不猜路径、不输出凭据。先复用已有 virtuoso_bridge；没有时按外部 bridge 官方说明在独立 Python 环境安装，核对当前版本接口。安装后验证五个技能可发现、相对引用完整，使用 api_probe.py 检查本地 API，再按 virtuoso-connect 做只读连接验证，报告成功项与缺失配置。
 
 Public downloads do not require a GitHub login. Keep all five skill folders as siblings: their references point to one another. Install optional libraries only if using GP proposals or YAML-based cloning helpers:
 
