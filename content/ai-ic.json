@@ -145,6 +145,27 @@
           "Markdown"
         ]
       }
+    },
+    {
+      "id": "zotero-reading-notes",
+      "name": "Zotero Reading Notes",
+      "version": "1.0",
+      "description": {
+        "zh": "按你的颜色与笔记偏好，把单篇 Zotero 批注整理进 Obsidian",
+        "en": "Turn one paper’s Zotero annotations into Obsidian notes using your color and note preferences"
+      },
+      "tags": {
+        "zh": [
+          "Zotero 批注",
+          "首次偏好配置",
+          "增量整理"
+        ],
+        "en": [
+          "Zotero annotations",
+          "Personal preferences",
+          "Incremental notes"
+        ]
+      }
     }
   ]
 }

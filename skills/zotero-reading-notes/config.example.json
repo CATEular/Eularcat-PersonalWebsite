@@ -1,0 +1,15 @@
+{
+  "paths": {
+    "vault": "",
+    "notes": ""
+  },
+  "annotations": {
+    "useColorMeaning": false,
+    "colorMeanings": {}
+  },
+  "notes": {
+    "language": "zh",
+    "detail": "concise",
+    "knowledgeCards": false
+  }
+}

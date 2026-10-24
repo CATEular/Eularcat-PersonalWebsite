@@ -43,4 +43,6 @@ npm run dev
 
 构建产物位于 `dist/`，可部署到支持静态网站的平台。通过环境变量 `SITE_ORIGIN` 设置正式站点地址，详见 [部署说明](docs/DEPLOYMENT.md)。网站使用根路径路由，未知页面应返回 `404.html`。
 
+新增 [Zotero Reading Notes](https://github.com/CATEular/skill/tree/main/skills/zotero-reading-notes)：按个人颜色含义、语言、详略和目标目录整理单篇论文批注；首次使用先配置偏好。网站提供中英文介绍与下载包。
+
 个人开发技能的独立开源仓库：[CATEular/skill](https://github.com/CATEular/skill)。本站保留经过审查的技能副本，用于生成介绍页和下载包。
