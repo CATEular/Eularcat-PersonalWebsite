@@ -2,7 +2,7 @@
 title: 'Buck 电感 DCR：压降、铜损与电流检测'
 description: '从电感串联模型推导 DCR 对直流变比、两状态电流、铜损与阻尼的影响，解释 RC 电流检测、时间常数失配、温度漂移和限流误差，并配合定量算例与对齐波形。'
 date: '2026-10-10'
-updated: '2026-10-13'
+updated: '2026-10-25'
 lang: zh
 type: note
 category: knowledge
@@ -562,3 +562,7 @@ DCR 的毫欧级测量宜采用四线／Kelvin 方法，分离测量引线与接
 4. Coilcraft CPS, [Support Center: Current Ratings, Losses and Temperature Rise](https://cps.coilcraft.com/en-us/faq/)。额定电流测试条件与实际开关损耗的区别。
 
 本文周期指数波形、失配误差波形和数值算例由正文所声明的模型计算，不代表某一现成控制器、电感器件或完整闭环系统的实测结果。
+
+## 继续阅读：小 DCR 的信号增益
+
+本篇解释 RC 匹配如何重建电感电流。若为了降低铜损继续减小 DCR，检测电压也随之减小；[小 DCR 检测与共享低频放大器](/zh/notes/buck-small-dcr-shared-amplifier/)进一步讨论怎样用快慢通路互补提高等效检测增益，并用共享放大器改善多相相对误差。两篇均可从[学习地图：电感 DCR 与电流检测](/zh/learn/#buck-inductor-dcr)进入。

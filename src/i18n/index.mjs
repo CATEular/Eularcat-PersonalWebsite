@@ -296,6 +296,8 @@ export const topicZh = {
   "Power Losses": "功率损耗",
   "Multi-phase DC-DC Buck": "多相 DC-DC Buck",
   "Phase Interleaving": "多相交错",
+  "Buck Inductor DCR": "电感 DCR 与电流检测",
+  "Multi-phase Protection": "多相保护与同步打嗝",
   "Current Sharing": "均流",
   "Transient Response": "瞬态响应",
   "Phase Shedding": "相数切换"
