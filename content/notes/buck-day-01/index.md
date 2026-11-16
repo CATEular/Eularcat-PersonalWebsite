@@ -1,8 +1,8 @@
 ---
 title: 'Buck 功率级：两状态、CCM / DCM 与纹波'
-description: '整理 Buck 功率级的两种开关状态、分段电流、CCM / DCM 临界条件、LC 滤波与输出纹波，配合电路图、三周期波形和计算实例。'
+description: '从零建立同步 Buck 功率级的物理直觉：为什么需要下管续流、CCM 伏秒平衡与三周期波形、输出电容纹波公式、轻载 DCM 求解以及 LC 滤波传递函数。'
 date: '2026-10-08'
-updated: '2026-10-13'
+updated: '2026-11-16'
 lang: zh
 type: note
 category: knowledge
@@ -11,341 +11,166 @@ tags: [Buck, 功率级, CCM, DCM, 电感电流, 纹波]
 status: published
 ---
 
-Buck 要把高低切换的 SW 电压变成平滑输出。先理解电流怎样续流，再计算增减流与充放电，才能说明占空比、纹波和工作模式为什么这样变化。
+Buck 降压变换器的任务很纯粹：**把较高的直流输入 $V_{in}$ 斩成方波，再通过 LC 滤波器变成平稳的低压输出 $V_o$**。
 
-[返回学习地图](/zh/learn/#power) · [全部个人笔记](/zh/notes/)
+只要抓住一条铁律——**电感电流不能瞬间突变**——就能推出上管关断后为什么必须有下管续流、占空比为什么等于 $V_o/V_{in}$、输出纹波有多大，以及轻载时为什么会冒出“电流断流”的 DCM 模式。
 
-## 1. 符号与方向
+[返回学习地图](/zh/learn/#power) · [全部个人笔记](/zh/notes/) · [下一篇：负载阶跃与大电流瞬态](/zh/notes/buck-day-02/)
 
-| 符号 | 含义 | 单位 / 约定 |
+## 1. 符号与方向约定
+
+| 符号 | 含义 | 约定 |
 | --- | --- | --- |
-| $V_{in}$（亦记为 $V_s$）、$V_o$ | 输入电压、输出电压的直流值 | V；$0<V_o<V_{in}$ |
-| $v_{SW}(t)$ | 开关节点对地电压 | V；SW 位于上下管与电感的交点 |
-| $Q_H$、$Q_L$ | 上管、同步下管 | 理想开关，不能同时导通 |
-| $L$、$C$、$R$ | 输出电感、电容、负载电阻 | H、F、Ω；$R=V_o/I_{load}$ |
-| $i_L(t)$ | 瞬时电感电流（小写） | A；正方向从 SW 经 L 流向输出 |
-| $I_L$、$I_{load}$ | 电感平均电流、负载电流（大写） | A；稳态 $I_L=I_{load}=V_o/R$ |
-| $\Delta i_L$ | 电感电流峰峰值 | A；$I_{L,max}-I_{L,min}$，不是半幅值 |
-| $i_C(t)$ | 流入电容正端的电流 | A；$i_C=i_L-I_{load}$，正值充电，负值放电 |
-| $v_L(t)$ | 电感左端减右端的电压 | V；$v_L=v_{SW}-v_o(t)\approx v_{SW}-V_o$ |
-| $v_C(t)$、$v_{C,ac}(t)$ | 理想电容电压及其交流分量 | V；无 ESR 时 $v_o(t)=v_C(t)$ |
-| $f_s$、$T_s$ | 开关频率、周期 | Hz、s；$T_s=1/f_s$ |
-| $D$、$D'=1-D$ | 上管导通占空比、其补数 | 无量纲；CCM 中 $T_{on}=DT_s$、$T_{off}=D'T_s$ |
-| $D_1$、$D_0$ | DCM 续流、零电流阶段的周期占比 | 无量纲；$D+D_1+D_0=1$；TI 将这两项记为 $D_2,D_3$ |
-| $R_C$、$R_L$ | 电容 ESR、电感 DCR | Ω；两者是不同的寄生电阻 |
+| $V_{in}$、$V_o$ | 输入、输出直流电压 | $0 < V_o < V_{in}$ |
+| $v_{SW}(t)$ | 开关节点 SW 对地电压 | 在 $V_{in}$ 与 $0$ 之间切换 |
+| $Q_H$、$Q_L$ | 上管、同步下管 | 交替导通，留死区防直通 |
+| $L$、$C$、$R$ | 输出电感、电容、负载电阻 | 负载电流 $I_{load}=V_o/R$ |
+| $i_L(t)$、$I_L$ | 瞬时电感电流、周期平均电流 | 正方向从 SW 流向输出；稳态 $I_L=I_{load}$ |
+| $\Delta i_L$ | 电感电流峰峰值 | $\Delta i_L = I_{L,max}-I_{L,min}$ |
+| $i_C(t)$ | 流入电容正端的电流 | $i_C=i_L-I_{load}$（正值充电，负值放电） |
+| $f_s$、$T_s$ | 开关频率、周期 | $T_s=1/f_s$ |
+| $D$、$D'$ | 上管占空比及其补数 | $D'=1-D$；CCM 下 $T_{on}=DT_s$ |
+| $R_C$、$R_L$ | 电容 ESR、电感 DCR | 分别为电容支路和电感绕组的串联电阻 |
 
-**分析条件：理想器件、周期稳态与小输出纹波近似。** 分段计算中将一个周期内的 $v_o(t)$ 视作 $V_o$，忽略开关压降、二极管压降、死区及寄生参数；ESR 的影响在纹波一节单独讨论。
+---
 
-## 2. 电路与两状态表
+## 2. 为什么需要两只管子？看懂 ON / OFF 两状态
 
-上管关断后，电感电流不能立即停下，所以下管提供续流路径。两段轮流增流与减流，使输出持续得到供流。
+![同步 Buck 总电路与 ON / OFF 两种状态，标出 SW、电感极性和正电流路径](./assets/buck-circuit-states.svg "图 1 · 同步 Buck 的两个开关状态。ON 时输入经上管供电；OFF 时下管导通把 SW 接地，为电感提供续流通路。")
 
-![同步 Buck 总电路与 ON / OFF 两种状态，标出 SW、电感极性和正电流路径](./assets/buck-circuit-states.svg "图 1 · 同步 Buck。ON：输入经上管供电；OFF：地经下管续流。两段 iL 均从 SW 流向输出。")
+1. **ON 状态（上管 $Q_H$ 开、下管 $Q_L$ 关）**：
+   $v_{SW}=V_{in}$，电感左端高于右端，电流线性上升：
+   $$v_L = V_{in}-V_o > 0,\qquad \frac{di_L}{dt}=\frac{V_{in}-V_o}{L}.$$
+2. **OFF 状态（上管 $Q_H$ 关、下管 $Q_L$ 开）**：
+   电感电流不能突然归零，所以必须由下管 $Q_L$（或非同步 Buck 中的续流二极管）从地接通一条通路让电流继续流向输出。此时 $v_{SW}=0$，电感左低右高，电流**方向不变、大小线性下降**：
+   $$v_L = -V_o < 0,\qquad \frac{di_L}{dt}=-\frac{V_o}{L}.$$
 
-ON 路径：$V_{in}^{+}\to Q_H\to SW\to L\to$ 输出节点 → 负载 → 地 → 输入负端。电容支路方向由 $i_C$ 的正负决定。
-
-OFF 路径：地 $\to Q_L\to SW\to L\to$ 输出节点 → 负载 → 地。**正向电感电流正在下降，方向没有反转。** 非同步 Buck 用续流二极管替代 $Q_L$，阳极接地、阴极接 SW。
-
-| 开关状态 | $v_{SW}$ | $v_L$（左正右负） | $di_L/dt$ 的符号 | $i_C=i_L-I_{load}$ |
+| 开关状态 | $v_{SW}$ | 电感电压 $v_L$ | 电流斜率 $di_L/dt$ | 电容电流 $i_C = i_L - I_{load}$ |
 | --- | --- | --- | --- | --- |
-| 上管开、下管关 | $V_{in}$ | $V_{in}-V_o$ | 正；$(V_{in}-V_o)/L$ | 从负到正；在 $i_L=I_{load}$ 时过零 |
-| 上管关、下管开 | $0$ | $-V_o$ | 负；$-V_o/L$ | 从正到负；在 $i_L=I_{load}$ 时过零 |
+| ON（$Q_H$ 导通） | $V_{in}$ | $V_{in}-V_o$ | $+(V_{in}-V_o)/L$ | 前半段为负（放电），追过 $I_{load}$ 后转正 |
+| OFF（$Q_L$ 导通） | $0$ | $-V_o$ | $-V_o/L$ | 前半段仍正（充电），跌破 $I_{load}$ 后转负 |
 
-电容是否充电看 $i_L-I_{load}$，不能只看上管是否导通。
+> **关键直觉**：电容在充电还是放电，**只看 $i_L$ 是否大于 $I_{load}$**，而不看上管是不是开着。上管刚开通时，只要 $i_L$ 还没追上负载，电容依然在放电；上管刚关断时，只要 $i_L$ 还高于负载，电容依然在充电。
 
-## 3. CCM：分段电流、平均值与峰谷值
+---
 
-先由两段电压计算电流，才能判断供流与器件峰值。基本关系为：
+## 3. CCM 稳态：伏秒平衡、占空比与纹波电流
 
-$$
-\begin{gathered}
-v_L=L\frac{di_L}{dt},\\
-i_L(t_2)-i_L(t_1)=\frac{1}{L}\int_{t_1}^{t_2}v_L(t)\,dt
-\end{gathered}
-$$
+当电感电流在整个开关周期内都保持大于零、从未断流时，称为**连续导通模式（CCM）**。
 
-有限电压可以阶跃；电感电流不能跳变。恒定电感电压对应恒定电流斜率。
+稳态意味着一个周期结束后，电感电流必须回到起点（增流量等于减流量）：
 
-**ON 段**，$0\le t\le DT_s$：
+$$(V_{in}-V_o)DT_s = V_o(1-D)T_s.$$
 
-$$
-\begin{gathered}
-v_L=V_{in}-V_o,\qquad T_{on}=DT_s,\\
-i_L(t)=I_{L,min}+\frac{V_{in}-V_o}{L}t
-\end{gathered}
-$$
+两边消去 $T_s$，立即得到 Buck 最核心的理想变换比（即**电感伏秒平衡**）：
 
-**OFF 段**，令 $\tau=t-DT_s$，$0\le\tau\le(1-D)T_s$：
+$$\boxed{D=\frac{V_o}{V_{in}}.}$$
 
-$$
-\begin{gathered}
-v_L=-V_o,\qquad T_{off}=(1-D)T_s,\\
-i_L(t)=I_{L,max}-\frac{V_o}{L}\tau
-\end{gathered}
-$$
+电感电流峰峰值纹波 $\Delta i_L$ 可以用上升段或下降段任意一段算出：
 
-“斜率 × 时间”给出该段的电流变化量；瞬时电流还需加上段首电流。
+$$\Delta i_L = \frac{V_{in}-V_o}{L}DT_s = \frac{V_o(1-D)T_s}{L}.$$
 
-稳态电流每周期回到起点，所以增流与减流必须相等。由此得到伏秒平衡与电压变换比：
+在三角波对称近似下，平均电流、峰值与谷值为：
 
-$$
-(V_{in}-V_o)DT_s=V_o(1-D)T_s
-$$
+$$I_L = I_{load} = \frac{V_o}{R},\qquad I_{L,max}=I_L+\frac{\Delta i_L}{2},\qquad I_{L,min}=I_L-\frac{\Delta i_L}{2}.$$
 
-$$
-\frac{V_{in}-V_o}{V_o}=\frac{D'}{D},\qquad
-\frac{V_o}{V_{in}}=D
-$$
+---
 
-纹波、平均值、最大 / 最小值：
+## 4. 经典算例与三周期波形
 
-$$
-\Delta i_L=\frac{V_{in}-V_o}{L}DT_s
-=\frac{V_o}{L}(1-D)T_s
-$$
+设同步 Buck 参数：$V_{in}=12\text{ V}$、$V_o=1.2\text{ V}$、$f_s=500\text{ kHz}$、$L=0.3\,\mu\text{H}$、$I_{load}=10\text{ A}$。
 
-$$
-I_L=\frac{1}{T_s}\int_0^{T_s}i_L(t)\,dt
-=I_{load}=\frac{V_o}{R}
-$$
-
-$$
-\begin{aligned}
-I_{L,max}&=I_L+\frac{\Delta i_L}{2},\\
-I_{L,min}&=I_L-\frac{\Delta i_L}{2}.
-\end{aligned}
-$$
-
-本页 CCM 示例要求 $I_{L,min}>0$。以上峰谷值对称式用于完整周期的两段三角波；不能直接套到有零电流平台的 DCM。
-
-## 4. 八格计算表
-
-题设：理想同步 Buck，CCM；$V_{in}=12\,\mathrm V$、$V_o=1.2\,\mathrm V$、$f_s=500\,\mathrm{kHz}=5\times10^5\,\mathrm{Hz}$、$L=0.3\,\mathrm{\mu H}=3\times10^{-7}\,\mathrm H$、$I_{load}=10\,\mathrm A$。
-
-$m_{on}=(V_{in}-V_o)/L$、$m_{off}=-V_o/L$ 分别为上升段与下降段的电流斜率，单位为 A/s。
-
-| 待求量 | 公式 | 代入值（带单位） | 结果 |
-| --- | --- | --- | --- |
-| $D$ | $V_o/V_{in}$ | $1.2\,\mathrm V/12\,\mathrm V$ | $0.10=10\%$（无量纲） |
-| $T_s$ | $1/f_s$ | $1/(5\times10^5\,\mathrm{Hz})$ | $2.0\,\mathrm{\mu s}$ |
-| $T_{on}$ | $DT_s$ | $0.10\times2.0\,\mathrm{\mu s}$ | $0.20\,\mathrm{\mu s}=200\,\mathrm{ns}$ |
-| $T_{off}$ | $(1-D)T_s$ | $0.90\times2.0\,\mathrm{\mu s}$ | $1.80\,\mathrm{\mu s}$ |
-| 上升斜率 | $(V_{in}-V_o)/L$ | $(12-1.2)\,\mathrm V/(0.3\,\mathrm{\mu H})$ | $+36\,\mathrm{A/\mu s}=+3.6\times10^7\,\mathrm{A/s}$ |
-| 下降斜率 | $-V_o/L$ | $-1.2\,\mathrm V/(0.3\,\mathrm{\mu H})$ | $-4\,\mathrm{A/\mu s}=-4\times10^6\,\mathrm{A/s}$ |
-| $\Delta i_L$ 峰峰值 | $m_{on}T_{on}=\lvert m_{off}\rvert T_{off}$ | $36\,\mathrm{A/\mu s}\times0.20\,\mathrm{\mu s}=4\,\mathrm{A/\mu s}\times1.80\,\mathrm{\mu s}$ | $7.2\,\mathrm A_{pp}$；两段一致 |
-| $I_{L,min}/I_{L,max}$ | $I_L\mp\Delta i_L/2$ | $10\,\mathrm A\mp7.2\,\mathrm A/2$ | $6.4\,\mathrm A/13.6\,\mathrm A$ |
-
-辅助检查：$R=0.12\,\Omega$；$i_C$ 范围为 $-3.6\sim+3.6\,\mathrm A$；$I_{L,min}>0$，CCM 假设成立。峰值 13.6 A 还用于器件电流校核，不能只看 10 A 的负载均值。
-
-## 5. 五行波形：看连续三个周期
-
-![理想同步 Buck 在三个连续周期内的上管门控、SW、电感电流、电容电流及理想电容电压](./assets/buck-ccm-waveforms.png "图 2 · 同一线性时间轴、三个连续周期。D = 10%，上升短而陡、下降长而缓；电容电压在 iC = 0 处取极值。最下面电压形状归一化到 0–1，采用任意单位，不表示 1 V 纹波。")
-
-每个周期从 $t=nT_s$ 开始。局部时间 $\tau=t-nT_s$：
-
-| $\tau$ | 事件 | $i_L$ | $i_C$ | $v_C$ 的变化 |
-| --- | --- | --- | --- | --- |
-| $0$ | 上管开，电感电流从谷值开始上升 | $6.4\,\mathrm A$ | $-3.6\,\mathrm A$ | 正在下降 |
-| $0.10\,\mathrm{\mu s}$ | 上升段经过平均电流 | $10\,\mathrm A$ | $0\,\mathrm A$ | 极小值，随后上升 |
-| $0.20\,\mathrm{\mu s}$ | 上管关、下管开 | $13.6\,\mathrm A$ | $+3.6\,\mathrm A$ | 仍在上升，斜率连续 |
-| $1.10\,\mathrm{\mu s}$ | 下降段经过平均电流 | $10\,\mathrm A$ | $0\,\mathrm A$ | 极大值，随后下降 |
-| $2.00\,\mathrm{\mu s}$ | 下一个周期开始 | $6.4\,\mathrm A$ | $-3.6\,\mathrm A$ | 回到周期起点的电压与斜率 |
-
-$$
-i_C=i_L-I_{load},\qquad \frac{dv_C}{dt}=\frac{i_C}{C}
-$$
-
-$i_L$、$i_C$ 为分段直线；$v_C$ 为分段抛物线，不能画成三角波或正弦波。题目没有给出 $C$，所以图中只画电容电压形状，不填电压纹波数值。
-
-## 6. 输出纹波：C 与 ESR
-
-电容缓冲电感供流的起伏，也留下电压纹波。用电流面积求电荷，再除以容值：
-
-$$
-v_{C,ac}(t)=v_{C,ac}(t_0)+\frac{1}{C}\int_{t_0}^{t}i_C(\tau)\,d\tau
-$$
-
-令 $t_1$ 为 $i_C$ 由负变正的时刻，$t_2$ 为由正变负的时刻。正电流三角形面积记为 $S_+$（单位 A·s，即电荷 C）：
-
-$$
-\begin{aligned}
-S_+&=\int_{t_1}^{t_2}i_C(t)\,dt\\
-&=\frac12\cdot\frac{\Delta i_L}{2}\cdot\frac{T_s}{2}\\
-&=\frac{\Delta i_LT_s}{8}.
-\end{aligned}
-$$
-
-$$
-\begin{aligned}
-\Delta v_{C,pp}&=\frac{S_+}{C}\\
-&=\frac{\Delta i_LT_s}{8C}\\
-&=\frac{\Delta i_L}{8f_sC}\\
-&=\frac{V_o(1-D)T_s^2}{8LC}.
-\end{aligned}
-$$
-
-加入电容 ESR $R_C$，忽略 ESL：
-
-$$
-\begin{gathered}
-v_o(t)=v_C(t)+i_C(t)R_C,\\
-\Delta v_{ESR,pp}=\Delta i_LR_C.
-\end{gathered}
-$$
-
-$$
-\Delta v_{o,pp}\lesssim\Delta v_{C,pp}+\Delta i_LR_C
-$$
-
-这是常用的纹波估算上界；两个分量的极值时刻不同，峰峰值通常不能精确相加。只有 ESR 分量远大于电容充放电分量时，才有：
-
-$$
-\Delta v_{o,pp}\approx\Delta i_LR_C
-$$
-
-**区分 ESR 与 DCR：** $\Delta i_LR_C$ 来自电容 ESR。电感 DCR $R_L$ 产生电压损耗，简化稳态关系为 $V_o\approx DV_{in}-I_LR_L$，不能替代这里的 $R_C$。
-
-## 7. CCM / 临界 / DCM
-
-负载减小时，电流谷值可能触零。续流能否继续会改变周期结构，所以要先判断模式再选公式。
-
-![连续三个周期的 CCM、临界模式与 DCM 电感电流，以及固定 L、R、Ts 时的电压变换比](./assets/buck-conduction-modes.svg "图 3 · CCM 电流谷值大于零；临界模式触零后立即进入下一周期；DCM 每周期有一段零电流平台。右图固定 L、R、Ts，展示 M = Vo / Vin 与 D 的关系。")
-
-本节 DCM 适用于非同步 Buck，或具有零电流关断 / 二极管仿真功能的同步 Buck。强制互补导通的理想同步 Buck 可以流过负电流，不会自动形成零电流平台。
-
-临界点用 CCM 纹波计算：
-
-$$
-\begin{aligned}
-I_{L,crit}&=\frac{\Delta i_{L,CCM}}{2}\\
-&=\frac{V_o(1-D)T_s}{2L}.
-\end{aligned}
-$$
-
-| 模式（正向供电） | 条件 | 波形 |
+| 待求量 | 公式 | 计算与结果 |
 | --- | --- | --- |
-| CCM | $I_L>\Delta i_{L,CCM}/2$ | 谷值大于零 |
-| 临界 | $I_L=\Delta i_{L,CCM}/2$ | 谷值等于零，无零电流平台 |
-| DCM | 负载低于临界值且禁止反向电流 | 谷值为零，有零电流平台 |
+| 占空比 $D$ | $V_o/V_{in}$ | $1.2 / 12 = \mathbf{0.10}$（10%） |
+| 周期 $T_s$ | $1/f_s$ | $1/(500\text{ kHz}) = \mathbf{2.0\,\mu\text{s}}$ |
+| 导通 / 关断时长 | $DT_s$、$(1-D)T_s$ | $T_{on}=\mathbf{0.20\,\mu\text{s}}$，$T_{off}=\mathbf{1.80\,\mu\text{s}}$ |
+| 上升 / 下降斜率 | $(V_{in}-V_o)/L$、$-V_o/L$ | $\mathbf{+36\text{ A}/\mu\text{s}}$ / $\mathbf{-4\text{ A}/\mu\text{s}}$ |
+| 电流纹波 $\Delta i_L$ | $36\times 0.20$ 或 $4\times 1.80$ | $\mathbf{7.2\text{ A}_{pp}}$ |
+| 谷值 / 峰值电流 | $10 \mp 7.2/2$ | $I_{L,min}=\mathbf{6.4\text{ A}} > 0$（确为 CCM），$I_{L,max}=\mathbf{13.6\text{ A}}$ |
 
-由 $V_o/R=V_o(1-D)T_s/(2L)$：
+![理想同步 Buck 在三个连续周期内的上管门控、SW、电感电流、电容电流及理想电容电压](./assets/buck-ccm-waveforms.png "图 2 · 三个连续周期的波形对齐。D=10% 使电流“快上慢下”；电容电压 vC 在 iC 过零处取得极小值与极大值，形状为分段抛物线。")
 
-$$
-\begin{gathered}
-R_{crit}=\frac{2L}{(1-D)T_s},\\
-L_{crit}=\frac{(1-D)RT_s}{2}.
-\end{gathered}
-$$
+把一周期（$2.0\,\mu\text{s}$）的五个关键时刻串起来看：
+- **$0\,\mu\text{s}$**：上管开通，$i_L=6.4\text{ A}$，$i_C=-3.6\text{ A}$，电容正在放电；
+- **$0.10\,\mu\text{s}$**：$i_L$ 上升穿过 $10\text{ A}$，$i_C$ 由负变正，$v_C$ 到达**最低谷**；
+- **$0.20\,\mu\text{s}$**：上管关、下管开，$i_L$ 达峰值 $13.6\text{ A}$，$i_C=+3.6\text{ A}$，电容仍在继续充电；
+- **$1.10\,\mu\text{s}$**：$i_L$ 下降穿过 $10\text{ A}$，$i_C$ 由正变负，$v_C$ 到达**最高峰**；
+- **$2.00\,\mu\text{s}$**：$i_L$ 回到 $6.4\text{ A}$，进入下一周期。
 
-固定 $D,L,T_s$：$R>R_{crit}$ 为 DCM；固定 $D,R,T_s$：$L<L_{crit}$ 为 DCM。$R_{crit}$ 的单位为 Ω，$L_{crit}$ 的单位为 H。
+---
 
-### DCM 的三段求解
+## 5. 输出电压纹波怎么算？看清 $C$ 和 $ESR$ 两部分
 
-令 $M=V_o/V_{in}$、$K=2L/(RT_s)$；$M,K$ 均无量纲。DCM 的 $D_1$ **不等于** $1-D$。
+输出电容帮电感吸收了电流纹波 $i_C$，代价是在输出端留下电压纹波，由两部分叠加：
 
-| 阶段 | 时长 | $v_L$ | $i_L$ |
-| --- | --- | --- | --- |
-| 上管导通 | $DT_s$ | $V_{in}-V_o$ | 从 0 上升至 $I_{L,max}$ |
-| 续流 | $D_1T_s$ | $-V_o$ | 从 $I_{L,max}$ 下降至 0 |
-| 零电流 | $D_0T_s=(1-D-D_1)T_s$ | 理想静止状态为 0 | 保持 0；电容供给负载 |
+1. **理想电容充放电分量（分段抛物线）**：
+   正电流区间恰好覆盖半个上升斜坡与半个下降斜坡，总充电量就是三角波在横轴上方的三角形面积：
+   $$\Delta Q = \frac{1}{2}\cdot\frac{\Delta i_L}{2}\cdot\frac{T_s}{2}=\frac{\Delta i_L T_s}{8} \implies \boxed{\Delta v_{C,pp}=\frac{\Delta i_L}{8f_s C}=\frac{V_o(1-D)T_s^2}{8LC}.}$$
+2. **电容串联电阻 ESR 分量（三角波）**：
+   $$\Delta v_{ESR,pp}=\Delta i_L R_C.$$
 
-零电流段两管关断，理想情况下 $v_{SW}=V_o$；实际节点可能振铃，本页不展开。
+因为两项的波峰和波谷不在同一时刻，总峰峰值通常满足估算上界 $\Delta v_{o,pp}\lesssim \Delta v_{C,pp}+\Delta v_{ESR,pp}$；只有当某一项远大于另一项时（如电解电容 ESR 主导），总纹波才直接近似等于较大那一项。精确极值推导见 [Buck 输出电容 ESR](/zh/notes/buck-esr-ripple/)。
 
-$$
-\begin{aligned}
-I_{L,max}&=\frac{V_{in}-V_o}{L}DT_s\\
-&=\frac{V_o}{L}D_1T_s,\\
-I_{L,min}&=0.
-\end{aligned}
-$$
+---
 
-$$
-\begin{gathered}
-(V_{in}-V_o)D=V_oD_1,\\
-M=\frac{D}{D+D_1}.
-\end{gathered}
-$$
+## 6. 轻载断流了怎么办？CCM、临界与 DCM
 
-对一个完整周期取三角形面积 $S_L$：
+在异步 Buck 或带过零关断（ZCD）的同步 Buck 中，如果负载一路减小，电感电流谷值撞到零之后不能倒流，就会趴在零上直到下个周期开始——这就是**断续导通模式（DCM）**。
 
-$$
-\begin{aligned}
-I_L=I_{load}&=\frac{V_o}{R}\\
-&=\frac{S_L}{T_s}\\
-&=\frac12I_{L,max}(D+D_1).
-\end{aligned}
-$$
+![连续三个周期的 CCM、临界模式与 DCM 电感电流，以及固定 L、R、Ts 时的电压变换比](./assets/buck-conduction-modes.svg "图 3 · CCM（谷值>0）、临界模式（谷值刚好=0）与 DCM（出现零电流平台）；右图展示固定 L、R、Ts 下 DCM 会让电压增益 M=Vo/Vin 高于占空比 D。")
 
-联立后：
+### 6.1 什么时候进入 DCM？
 
-$$
-D_1(D+D_1)=\frac{2L}{RT_s}=K
-$$
+临界条件就是**谷值刚好等于零**，即平均电流等于半个纹波：
 
-$$
-D_1=\frac{-D+\sqrt{D^2+\frac{8L}{RT_s}}}{2}
-$$
+$$I_{L,crit}=\frac{\Delta i_{L,CCM}}{2}=\frac{V_o(1-D)T_s}{2L}.$$
 
-$$
-V_o=\frac{2D}{D+\sqrt{D^2+\frac{8L}{RT_s}}}V_{in}
-$$
+换成电阻负载或电感临界值，只要满足下面任一条件就进入 DCM（前提是下管禁止反向电流）：
 
-DCM 要求 $D+D_1<1$。此时 $M>D$，且变换比还取决于 $L,R,T_s$；不能继续用 $V_o=DV_{in}$。在固定 $K$ 的占空比扫描中，临界占空比为 $D_{crit}=1-K$（仅在 $0<K<1$ 时位于 $0<D<1$ 内）。
+$$R > R_{crit}=\frac{2L}{(1-D)T_s}\qquad \text{或} \qquad L < L_{crit}=\frac{(1-D)RT_s}{2}.$$
 
-## 8. 无 ESR / DCR 的 LC 滤波器
+### 6.2 DCM 下占空比和输出电压怎么算？
 
-稳态纹波之后，还需理解输出对不同频率变化的响应。把电感、电容与负载作为从 SW 到输出的二阶低通：
+DCM 一个周期分成三段：**导通 $DT_s$ → 续流 $D_1 T_s$ → 零电流空闲 $D_0 T_s$**（注意 $D_1 < 1-D$）。
 
-$$
-Z_p=\frac{1}{sC}\parallel R
-$$
+1. **伏秒平衡**（零电流段电感电压为 0）：
+   $$(V_{in}-V_o)D = V_o D_1 \implies M=\frac{V_o}{V_{in}}=\frac{D}{D+D_1}.$$
+2. **平均电流等于负载电流**：
+   $$I_L = \frac{1}{2}I_{L,max}(D+D_1) = \frac{V_o}{R},\qquad I_{L,max}=\frac{V_{in}-V_o}{L}DT_s.$$
+3. **联立消去 $I_{L,max}$，解得 $D_1$ 与输出电压**：
+   令无量纲参数 $K=\dfrac{2L}{RT_s}$，可得 $D_1(D+D_1)=K$，解出：
+   $$D_1=\frac{-D+\sqrt{D^2+4K}}{2},\qquad \boxed{V_o = \frac{2D}{D+\sqrt{D^2+\frac{8L}{RT_s}}}V_{in}.}$$
 
-$$
-\begin{aligned}
-F(s)&=\frac{V_o(s)}{V_{SW}(s)}\\
-&=\frac{Z_p}{sL+Z_p}\\
-&=\frac{1}{1+\frac{sL}{R}+s^2LC}\\
-&=\frac{1}{1+\frac{s}{Q\omega_0}+\frac{s^2}{\omega_0^2}}.
-\end{aligned}
-$$
+> **记住 DCM 的最大变化**：由于 $D+D_1<1$，同样占空比下 DCM 的输出电压会**高于** $D V_{in}$，且变换比同时跟负载 $R$、电感 $L$ 和开关周期 $T_s$ 绑定在一起。
 
-$$
-\begin{gathered}
-\omega_0=\frac{1}{\sqrt{LC}},\\
-f_0=\frac{\omega_0}{2\pi},\\
-Q=R\sqrt{\frac{C}{L}}.
-\end{gathered}
-$$
+---
 
-| 量 | 含义 |
-| --- | --- |
-| $s$ | 拉普拉斯复频率，单位 $\mathrm{s^{-1}}$ |
-| $Z_p$ | 电容阻抗与负载电阻的并联等效，单位 Ω |
-| $\omega_0$、$f_0$ | LC 固有角频率（rad/s）、频率（Hz） |
-| $Q$ | 品质因数，无量纲 |
-| $V_{SW}(s)$、$V_o(s)$ | LC 网络输入与输出的拉普拉斯变换 |
+## 7. 频域视角：无损 LC 滤波器
 
-这个关系用于理解滤波与谐振：$L,C$ 决定固有频率，负载影响阻尼。**其输入为 SW 电压。** 开关 Buck 的电源到输出关系还包含占空比与工作模式。
+把电感、电容和负载看成一个从 SW 节点到输出的二阶低通滤波器，其传递函数为：
 
-## 9. 第二组算例与模式核算
+$$F(s)=\frac{V_o(s)}{V_{SW}(s)}=\frac{1}{1+\dfrac{sL}{R}+s^2LC}=\frac{1}{1+\dfrac{s}{Q\omega_0}+\dfrac{s^2}{\omega_0^2}},$$
 
-理想同步 Buck，$V_{in}=9\,\mathrm V$、$V_o=1.5\,\mathrm V$、$f_s=600\,\mathrm{kHz}$、$L=0.5\,\mathrm{\mu H}$、$I_{load}=5\,\mathrm A$，先按两状态 CCM 求解，再核对模式：
+其中固有角频率与品质因数为：
 
-| 量 | 结果 | 核对依据 |
-| --- | --- | --- |
-| 占空比 D | 1/6，约 16.67% | 理想 CCM 的伏秒平衡 |
-| 周期 | 1.6667 µs | $1/f_s$ |
-| 导通／关断时间 | 0.2778／1.3889 µs | $DT_s$ 与 $(1-D)T_s$ |
-| 电流上坡／下坡 | +15／−3 A/µs | $(V_{in}-V_o)/L$ 与 $-V_o/L$ |
-| 电流纹波峰峰值 | 4.1667 A | 两段分别得到相同电流变化量 |
-| 电感谷值／峰值 | 2.9167／7.0833 A | 平均电流加减半个纹波 |
-| 临界负载电流 | 2.0833 A | 正电流临界条件 $I_{crit}=\Delta i_L/2$ |
+$$\omega_0=\frac{1}{\sqrt{LC}},\qquad f_0=\frac{1}{2\pi\sqrt{LC}},\qquad Q=R\sqrt{\frac{C}{L}}.$$
 
-谷值大于零，5 A 工作点的 CCM 假设自洽。负载低于临界值时，若控制器禁止负电流，需要转用 DCM 模型；若强制互补导通，电流可跨零而继续保持两状态。
+电感和电容决定了滤波转折频率 $f_0$（需要远低于 $f_s$ 才能有效滤除开关纹波），而负载越重（$R$ 越小），系统阻尼越强（$Q$ 越小）。
 
-理想 LC 传递函数描述的是给定开关节点电压如何被滤波，不能直接给出闭环稳定时间。进入 [负载阶跃笔记](/zh/notes/buck-day-02/) 可继续用电荷积分分析瞬态；[ESR 笔记](/zh/notes/buck-esr-ripple/) 则补充输出端口的电阻纹波与极值错位。
+---
 
-## 10. 参考资料
+## 8. 练习算例（巩固自测）
 
-- [TI SLVA057 · Understanding Buck Power Stages in Switchmode Power Supplies](https://www.ti.com/lit/an/slva057/slva057.pdf)：两状态与 CCM 参见 §2.1、Fig.2–3（文内第 4–5 页 / PDF 第 8–9 页）；同步电路参见 §4.1、Fig.15（文内第 20 页 / PDF 第 24 页）；DCM 补充参见 §2.2–2.3、Fig.4–6。
-- [TI SLVA630A · Output Ripple Voltage for Buck Switching Regulator](https://www.ti.com/lit/an/slva630a/slva630a.pdf)：参考其电容 / ESR 纹波分量与波形排法。
+已知同步 Buck：$V_{in}=9\text{ V}$、$V_o=1.5\text{ V}$、$f_s=600\text{ kHz}$、$L=0.5\,\mu\text{H}$、$I_{load}=5\text{ A}$。
+
+1. 先按 CCM 求解：$D = 1.5/9 = 1/6$，$T_s = 1.6667\,\mu\text{s}$，$T_{on} = 0.2778\,\mu\text{s}$，$T_{off}=1.3889\,\mu\text{s}$；
+2. 电流斜率：$+15\text{ A}/\mu\text{s}$ / $-3\text{ A}/\mu\text{s}$，峰峰值纹波 $\Delta i_L = 4.1667\text{ A}$；
+3. 模式校验：临界电流 $I_{crit} = 4.1667/2 = 2.0833\text{ A}$。当前负载 $5\text{ A} > 2.0833\text{ A}$，谷值 $2.9167\text{ A} > 0$，确实工作在 CCM。
+
+---
+
+## 参考资料
+
+- [TI SLVA057 · Understanding Buck Power Stages in Switchmode Power Supplies](https://www.ti.com/lit/an/slva057/slva057.pdf)（§2.1–2.3、§4.1：两状态、CCM 与 DCM 推导）
+- [TI SLVA630A · Output Ripple Voltage for Buck Switching Regulator](https://www.ti.com/lit/an/slva630a/slva630a.pdf)（电容与 ESR 纹波波形拆解）
