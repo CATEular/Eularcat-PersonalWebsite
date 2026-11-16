@@ -137,3 +137,4 @@ $$\Delta\overline V_o \approx -\frac{v_{inj}(t_k)}{\beta} = -\frac{-5\text{ mV}}
 1. Texas Instruments, [TPS51125 Datasheet](https://www.ti.com/lit/ds/symlink/tps51125.pdf)（§7.3.1–7.3.4，D-CAP 与内部斜坡机制）。
 2. Texas Instruments, [SLVA453: D-CAP Mode With All-Ceramic Output Capacitor](https://www.ti.com/lit/an/slva453/slva453.pdf)（全陶瓷电容外部纹波注入与直流精度计算）。
 3. Texas Instruments, [SNVA874: Stability Analysis and Design of COT Type-3 Ripple Circuit](https://www.ti.com/lit/an/snva874/snva874.pdf)（Type-III 注入网络频域稳定性）。
+4. 进阶片内实现：[片内虚拟纹波产生器：双支路 RC 注入与直流抵消原理](/zh/notes/buck-virtual-ripple-generator/)。
