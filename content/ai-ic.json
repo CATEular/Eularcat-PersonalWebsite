@@ -62,7 +62,9 @@
         "zh": "从测试设置到结果分析与回看",
         "en": "From test setup to analysis and revisiting results"
       },
-      "notes": [],
+      "notes": [
+        "virtuoso-spectre-speedup"
+      ],
       "links": [
         {
           "path": "virtuoso-workflow/rc",
