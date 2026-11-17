@@ -69,6 +69,25 @@ status: published
 
 > **边界提示**：只要大改了供电电压、参考基准、分频比或反馈拓扑，旧的 `spectre.fc` 对应的稳态就不再成立，需要先重新跑出一次新稳态并更新 `spectre.fc`。
 
+### 2.4 常见大坑：为什么 `readic` 后起点电压还是“掉压”？（`rforce` 与 `skipdc`）
+
+很多时候明明加载了 `spectre.fc`，结果打开波形一看：$t=0$ 时刻电感电流或内部低阻节点是对的，**唯独输出电容节点（例如 `Vout`）莫名其妙掉了一截**（比如 `spectre.fc` 里写着 `4.986 V`，波形起点却变成了 `3.863 V`，直接差了 `1.12 V`），导致控制环路在 $t=0$ 误判欠压、疯狂拉高占空比去重新充电。
+
+**根本原因在于 Spectre 的默认强制电阻 `rforce = 1 Ω`**：  
+Spectre 在用 `readic` 施加节点初值时，**并不是用理想零阻电压源把节点钉死，而是在每个节点与初值之间串联了一颗 `rforce` 电阻（默认高达 `1 Ω`）**。只要大电流节点（如输出负载或大电流支路）在 $t=0$ 求解瞬间存在 $\Delta I$ 的不平衡电流（例如 `~1.12 A`）流过这颗默认的 `1 Ω` 电阻，就会凭空产生 $\Delta V = \Delta I \cdot r_{\text{force}} \approx 1.12\text{ V}$ 的初始压降！此时查看 `Output Log` 通常也能看到类似提示：`Initial condition computed for node ... is in error by ... V. To reduce error, decrease rforce.`
+
+**三步解决这个坑：**
+
+1. **把 `rforce` 从默认的 `1` 改成 `1m`（`1 mΩ`）**：
+   打开 ADE L 菜单 **`Simulation -> Options -> Analog...`** → 切到 **`Algorithm`** 标签页 → 找到 **`rforce`** 栏填入 **`1m`**（如果界面版本没有单独列出 `rforce`，可在同页最底部的 `Additional arguments` 框里填写 `rforce=1m`）。  
+   改成 `1m` 后，$1.1\text{ A} \times 1\text{ m}\Omega = 1.1\text{ mV}$，初始电压误差瞬间压到毫伏以内。（注意：不要设得过小如 `1u` 或 `1n`，`1m` ~ `10m` 最稳，既保证精度又不易引发矩阵奇异。）
+2. **核对 $t=0$ 初始负载/激励与保存 `spectre.fc` 时一致**：
+   如果 `spectre.fc` 是在某个特定直流负载或工作点下保存的（例如约 `1.53 A`），做负载阶跃（Load Step）等测试时，务必让激励源在 $t=0$ 先处于该初始值，延迟几微秒后再发生阶跃，否则环路一开跑就要先追平负载落差。
+3. **随时间跳变的激励测试保持 `skipdc = yes`**：
+   在包含阶跃源、脉冲跳变的瞬态测试台里，不要选择 `waveless` 模式，否则 `waveless` 会冻结时变激励源使其无法正常跳变。
+
+![在 Simulator Options 的 Algorithm 标签页中将 rforce 设为 1m](./assets/rforce-algorithm.jpg "图 2 · 通过 Simulation -> Options -> Analog... 打开 Simulator Options，在 Algorithm 标签页下将 rforce 设为 1m（1 mΩ），消除大电流节点使用 readic 时的初始压降误差。")
+
 ---
 
 ## 3. 第二步：开启 `APS` 并用 `+mt=4` 指定线程数
@@ -83,9 +102,9 @@ status: published
    - `Error Preset` 保持 **`Do not override`**，避免盲目放宽精度；
    - **`Multi-Threading` 一栏保持选择 `Auto`，不要点 `Manual`**（在很多 Linux 显示环境下，`Manual` 选项与后面的 `Number of threads:` 文字会发生界面重叠导致无法输入数字）。
 
-![打开 Setup -> High-Performance Simulation](./assets/setup-aps-menu.png "图 2 · ADE L 的 Setup -> High-Performance Simulation... 入口。")
+![打开 Setup -> High-Performance Simulation](./assets/setup-aps-menu.png "图 3 · ADE L 的 Setup -> High-Performance Simulation... 入口。")
 
-![High-Performance Simulation Options 保持 Auto](./assets/aps-options-auto.jpg "图 3 · 选中 APS 模式；Multi-Threading 处的 Manual 与文字重叠无法直接选择，保持 Auto 即可。")
+![High-Performance Simulation Options 保持 Auto](./assets/aps-options-auto.jpg "图 4 · 选中 APS 模式；Multi-Threading 处的 Manual 与文字重叠无法直接选择，保持 Auto 即可。")
 
 ### 3.2 在 `Environment` 中用 `+mt=4` 指定真实线程数
 
@@ -96,7 +115,7 @@ status: published
    ```
    （根据服务器核数与电路规模，通常填 `+mt=4` 或 `+mt=8`）。
 
-![在 Environment Options 中填入 +mt=4](./assets/env-mt4.jpg "图 4 · 通过 Setup -> Environment... 在 userCmdLineOption 中填入 +mt=4 来强制指定 Spectre APS 的多线程核数。")
+![在 Environment Options 中填入 +mt=4](./assets/env-mt4.jpg "图 5 · 通过 Setup -> Environment... 在 userCmdLineOption 中填入 +mt=4 来强制指定 Spectre APS 的多线程核数。")
 
 ### 为什么不是线程越多越快
 
@@ -113,7 +132,7 @@ status: published
    - 在弹出的 **`Simulator Options`** 窗口切换到 **`Check`** 标签页；
    - 在 `ERROR CHECKING OPTIONS` 下找到 **`diagnose`**，勾选 **`detailed`**，点击 OK。
 
-![在 Simulator Options 的 Check 页勾选 diagnose detailed](./assets/diagnose-detailed.jpg "图 5 · 通过 Simulation -> Options -> Analog... 打开 Simulator Options，在 Check 标签页下将 diagnose 设为 detailed。")
+![在 Simulator Options 的 Check 页勾选 diagnose detailed](./assets/diagnose-detailed.jpg "图 6 · 通过 Simulation -> Options -> Analog... 打开 Simulator Options，在 Check 标签页下将 diagnose 设为 detailed。")
 
 2. **跑一段短瞬态**：
    启动仿真后不用等它全部结束，只要跑到进度条明显卡顿的时刻，直接点 `Stop` 停掉即可。
@@ -134,7 +153,7 @@ status: published
 
 - **模拟 / 混合信号 IC**：高速比较器、数字状态机/校准逻辑、上电复位（POR）与启动辅助电路、带大规模开关阵列的辅助模块；
 - **射频 IC（PLL / 收发机）**：只关注环路动态或锁定过程时的**高速分频器（Divider）、PFD、电荷泵（CP）**，或者验证后端/前端局部性能时，把另一半链路（如纯数字控制、偏置基准、已验证的混频/基带缓冲级）用行为级代替；
-- **电源管理芯片（PMIC / Buck，如图 6 实操示例）**：高压功率开关与体二极管（`POWERSTAGE`）、浮地自举驱动与互锁（`GATE_DRIVER`）、过流/过零比较器（`OCP_COMP`）、自举高压充电通路（`BOOTSTRAP_REG`）。
+- **电源管理芯片（PMIC / Buck，如图 7 实操示例）**：高压功率开关与体二极管（`POWERSTAGE`）、浮地自举驱动与互锁（`GATE_DRIVER`）、过流/过零比较器（`OCP_COMP`）、自举高压充电通路（`BOOTSTRAP_REG`）。
 
 ### 5.2 新建 `veriloga` 与 `config` 视图的核心原则：同库同名
 
@@ -202,7 +221,7 @@ V(out) <+ v_low + (v_high - v_low) * transition(logic_state, 0.0, t_rise, t_fall
    - 最稳做法：直接从 `config` 窗口右上方的 **`ADE L`** 按钮启动仿真器；
    - 如果 ADE L 早已打开：点菜单 **`Setup -> Design...`**，检查 **`View Name`** 是否是 **`config`**（如果写着 `schematic`，必须改成 `config` 点 OK）。
 
-![在 config 的 Table View 中将瓶颈模块切为 veriloga](./assets/config-veriloga-table.jpg "图 6 · Hierarchy Editor（config）的 Table View 示例：将 GATE_DRIVER、OCP_COMP、POWERSTAGE 的 View To Use 指定为蓝色高亮的 veriloga，其余模块保持 schematic。")
+![在 config 的 Table View 中将瓶颈模块切为 veriloga](./assets/config-veriloga-table.jpg "图 7 · Hierarchy Editor（config）的 Table View 示例：将 GATE_DRIVER、OCP_COMP、POWERSTAGE 的 View To Use 指定为蓝色高亮的 veriloga，其余模块保持 schematic。")
 
 > 每次觉得“我明明改了 Verilog-A 怎么还是这么慢”，90% 都是忘了在 `config` 窗口点 **Save**，或者 ADE L 的 `Design` 视图还停留在 `schematic`。
 
